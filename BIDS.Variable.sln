@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIDSSMemLib.Variable", "BID
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIDSSMemLib.Variable.Tests", "BIDSSMemLib.Variable.Tests\BIDSSMemLib.Variable.Tests.csproj", "{6EDBCD86-BFFB-47C2-911D-147498762F99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariableSMemMonitor", "VariableSMemMonitor\VariableSMemMonitor.csproj", "{15FEAB74-A835-477E-8B6C-A564342EC20A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{6EDBCD86-BFFB-47C2-911D-147498762F99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EDBCD86-BFFB-47C2-911D-147498762F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EDBCD86-BFFB-47C2-911D-147498762F99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15FEAB74-A835-477E-8B6C-A564342EC20A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15FEAB74-A835-477E-8B6C-A564342EC20A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15FEAB74-A835-477E-8B6C-A564342EC20A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15FEAB74-A835-477E-8B6C-A564342EC20A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
