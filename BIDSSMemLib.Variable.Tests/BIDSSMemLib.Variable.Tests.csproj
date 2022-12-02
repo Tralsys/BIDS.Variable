@@ -18,9 +18,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="TR.SMemIF.Mock" Version="1.1.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\BIDSSMemLib.Variable\BIDSSMemLib.Variable.csproj" />
-		<ProjectReference Include="..\TR.SMemIF.Mock\TR.SMemIF.Mock.csproj" />
 	</ItemGroup>
 </Project>
