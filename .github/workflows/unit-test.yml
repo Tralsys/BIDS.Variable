@@ -19,6 +19,7 @@ jobs:
         project:
           - BIDS.Parser.Variable.Tests
           - BIDSSMemLib.Variable.Tests
+          - VariableSMemMonitor.Core.Tests
         os:
           - ubuntu-latest
           - windows-latest
