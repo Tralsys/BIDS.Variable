@@ -33,21 +33,21 @@ public static partial class Utils
 		{
 			VariableDataType.Boolean => BitConverter.GetBytes((bool)(obj ?? false)),
 
-			VariableDataType.Int8 => new byte[] { Convert.ToByte((sbyte)(obj ?? 0)) },
-			VariableDataType.Int16 => BitConverter.GetBytes((short)(obj ?? 0)),
-			VariableDataType.Int32 => BitConverter.GetBytes((int)(obj ?? 0)),
-			VariableDataType.Int64 => BitConverter.GetBytes((long)(obj ?? 0)),
+			VariableDataType.Int8 => new byte[] { Convert.ToByte((sbyte)(obj ?? (sbyte)0)) },
+			VariableDataType.Int16 => BitConverter.GetBytes((short)(obj ?? (short)0)),
+			VariableDataType.Int32 => BitConverter.GetBytes((int)(obj ?? (int)0)),
+			VariableDataType.Int64 => BitConverter.GetBytes((long)(obj ?? (long)0)),
 
-			VariableDataType.UInt8 => new byte[] { (byte)(obj ?? 0) },
-			VariableDataType.UInt16 => BitConverter.GetBytes((ushort)(obj ?? 0)),
-			VariableDataType.UInt32 => BitConverter.GetBytes((uint)(obj ?? 0)),
-			VariableDataType.UInt64 => BitConverter.GetBytes((ulong)(obj ?? 0)),
+			VariableDataType.UInt8 => new byte[] { (byte)(obj ?? (byte)0) },
+			VariableDataType.UInt16 => BitConverter.GetBytes((ushort)(obj ?? (ushort)0)),
+			VariableDataType.UInt32 => BitConverter.GetBytes((uint)(obj ?? (uint)0)),
+			VariableDataType.UInt64 => BitConverter.GetBytes((ulong)(obj ?? (ulong)0)),
 
 #if NET5_0_OR_GREATER
 			VariableDataType.Float16 => BitConverter.GetBytes((Half)(obj ?? default(Half))),
 #endif
-			VariableDataType.Float32 => BitConverter.GetBytes((float)(obj ?? 0)),
-			VariableDataType.Float64 => BitConverter.GetBytes((double)(obj ?? 0)),
+			VariableDataType.Float32 => BitConverter.GetBytes((float)(obj ?? (float)0)),
+			VariableDataType.Float64 => BitConverter.GetBytes((double)(obj ?? (double)0)),
 
 			_ => throw new NotSupportedException($"The ValueType `{type} ({(int)type})` is not supported")
 		};
