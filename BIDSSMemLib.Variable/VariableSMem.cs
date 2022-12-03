@@ -158,6 +158,9 @@ public partial class VariableSMem : IDisposable
 			if (!SMemIF.Write(0, ref contentAreaOffset)
 				|| !SMemIF.WriteArray(StructureAreaOffset, structureBytes, 0, structureBytes.Length))
 				throw new AccessViolationException("Write to SMem failed");
+
+			// 初期値を書き込んでおく
+			WriteToSMemFromStructure(contentAreaOffset);
 		}
 		else
 		{
@@ -244,12 +247,7 @@ public partial class VariableSMem : IDisposable
 				continue;
 		}
 
-		// DataType IDはStructure側で既に書き込んであるため、Content側には含めない
-		byte[] bytes = Structure.GetBytes().Skip(sizeof(int)).ToArray();
-		long contentLength = bytes.LongLength;
-		if (!SMemIF.Write(ContentAreaOffset, ref contentLength)
-			|| !SMemIF.WriteArray(ContentAreaOffset + sizeof(long), bytes, 0, bytes.Length))
-			throw new AccessViolationException("Write to SMem failed");
+		WriteToSMemFromStructure(ContentAreaOffset);
 	}
 
 	public void WriteToSMemFromPayload(in VariableStructurePayload payload)
@@ -270,7 +268,11 @@ public partial class VariableSMem : IDisposable
 			_Members[i] = gotData;
 		}
 
+		WriteToSMemFromStructure(ContentAreaOffset);
+	}
 
+	protected void WriteToSMemFromStructure(in long ContentAreaOffset)
+	{
 		// DataType IDはStructure側で既に書き込んであるため、Content側には含めない
 		byte[] bytes = Structure.GetBytes().Skip(sizeof(int)).ToArray();
 		long contentLength = bytes.LongLength;
