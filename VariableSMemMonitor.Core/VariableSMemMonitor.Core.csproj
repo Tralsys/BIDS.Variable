@@ -4,6 +4,8 @@
 		<TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
 		<LangVersion>10</LangVersion>
 		<Nullable>enable</Nullable>
+		<AssemblyName>TR.VariableSMemMonitor.Core</AssemblyName>
+		<RootNamespace>TR.VariableSMemMonitor.Core</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\BIDSSMemLib.Variable\BIDSSMemLib.Variable.csproj" />

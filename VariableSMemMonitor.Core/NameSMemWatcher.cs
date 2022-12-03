@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using TR;
 using TR.BIDSSMemLib;
 
-namespace VariableSMemMonitor.Core;
+namespace TR.VariableSMemMonitor.Core;
 
 public class NameSMemWatcher : IDisposable
 {

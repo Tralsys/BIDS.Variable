@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
-using VariableSMemMonitor.Core;
+using TR.VariableSMemMonitor.Core;
 
 namespace VariableSMemMonitor;
 

@@ -1,5 +1,6 @@
 using TR;
 using TR.BIDSSMemLib;
+using TR.VariableSMemMonitor.Core;
 
 namespace VariableSMemMonitor.Core.Tests;
 

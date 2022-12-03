@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 using BIDS.Parser.Variable;
 
-using TR;
 using TR.BIDSSMemLib;
 
-namespace VariableSMemMonitor.Core;
+namespace TR.VariableSMemMonitor.Core;
 
 public class VariableSMemWatcher : IDisposable
 {
