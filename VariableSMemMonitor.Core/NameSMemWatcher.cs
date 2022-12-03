@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using TR;
@@ -5,7 +6,7 @@ using TR.BIDSSMemLib;
 
 namespace VariableSMemMonitor.Core;
 
-public class NameSMemWatcher
+public class NameSMemWatcher : IDisposable
 {
 	VariableSMemNameManager NameManager { get; }
 
@@ -35,6 +36,11 @@ public class NameSMemWatcher
 		}
 
 		return addedName;
+	}
+
+	public void Dispose()
+	{
+		((IDisposable)NameManager).Dispose();
 	}
 }
 

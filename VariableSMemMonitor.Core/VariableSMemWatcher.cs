@@ -9,7 +9,7 @@ using TR.BIDSSMemLib;
 
 namespace VariableSMemMonitor.Core;
 
-public class VariableSMemWatcher
+public class VariableSMemWatcher : IDisposable
 {
 	public record ChangedValues(string SMemName, VariableStructurePayload RawPayload, Dictionary<string, object> ChangedValuesDic);
 
@@ -110,6 +110,11 @@ public class VariableSMemWatcher
 		// MoveNextにどちらか片方失敗したなら、両者は違う長さ -> return true
 		// `white`の条件指定から考えて、ここまで来るのに両方とも成功はあり得ない
 		return (moveNext1 || moveNext2);
+	}
+
+	public void Dispose()
+	{
+		((IDisposable)VSMem).Dispose();
 	}
 }
 
