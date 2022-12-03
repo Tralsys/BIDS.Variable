@@ -6,6 +6,15 @@
 		<Nullable>enable</Nullable>
 		<AssemblyName>TR.VariableSMemMonitor.Core</AssemblyName>
 		<RootNamespace>TR.VariableSMemMonitor.Core</RootNamespace>
+		<Authors>Tetsu Otter</Authors>
+		<Company>Tech Otter</Company>
+		<Product>BIDS Project</Product>
+		<Copyright>Copyright 2022 Tetsu Otter</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/Tralsys/BIDS.Variable</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Tralsys/BIDS.Variable</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\BIDSSMemLib.Variable\BIDSSMemLib.Variable.csproj" />
