@@ -94,17 +94,17 @@ public class VariableSMemWatcher
 		IEnumerator enumerator1 = arr1.GetEnumerator();
 		IEnumerator enumerator2 = arr2.GetEnumerator();
 
-		bool moveNext1 = true;
-		bool moveNext2 = true;
+		bool moveNext1 = enumerator1.MoveNext();
+		bool moveNext2 = enumerator2.MoveNext();
 
-		do
+		while (moveNext1 && moveNext2)
 		{
 			if (!Equals(enumerator1.Current, enumerator2.Current))
 				return true;
 
 			moveNext1 = enumerator1.MoveNext();
 			moveNext2 = enumerator2.MoveNext();
-		} while (moveNext1 && moveNext2);
+		}
 
 		// MoveNextに両方失敗したなら、両者は同じ長さ。 -> return false
 		// MoveNextにどちらか片方失敗したなら、両者は違う長さ -> return true
