@@ -54,7 +54,7 @@ public class VariableSMemWatcher
 			{
 				object? lastValue = CurrentValues[v.Name];
 
-				if (lastValue is null || lastValue != data.Value)
+				if (lastValue is null || !Equals(lastValue, data.Value))
 				{
 					if (data.Value is not null)
 						ChangedValues[v.Name] = data.Value;
