@@ -5,4 +5,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\VariableSMemMonitor.Core\VariableSMemMonitor.Core.csproj" />
+	</ItemGroup>
 </Project>
