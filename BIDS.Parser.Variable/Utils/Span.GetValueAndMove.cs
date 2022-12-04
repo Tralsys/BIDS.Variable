@@ -22,7 +22,7 @@ public static partial class Utils
 	#region Signed Integer
 	static public System.SByte GetInt8AndMove(ref ReadOnlySpan<byte> span)
 	{
-		var v = (sbyte)span[0];
+		var v = unchecked((sbyte)span[0]);
 		span = span[1..];
 		return v;
 	}

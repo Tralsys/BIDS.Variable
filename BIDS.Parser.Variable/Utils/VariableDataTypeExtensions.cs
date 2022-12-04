@@ -33,7 +33,7 @@ public static partial class Utils
 		{
 			VariableDataType.Boolean => BitConverter.GetBytes((bool)(obj ?? false)),
 
-			VariableDataType.Int8 => new byte[] { Convert.ToByte((sbyte)(obj ?? (sbyte)0)) },
+			VariableDataType.Int8 => new byte[] { (byte)((sbyte)(obj ?? 0) & 0xFF) },
 			VariableDataType.Int16 => BitConverter.GetBytes((short)(obj ?? (short)0)),
 			VariableDataType.Int32 => BitConverter.GetBytes((int)(obj ?? (int)0)),
 			VariableDataType.Int64 => BitConverter.GetBytes((long)(obj ?? (long)0)),
