@@ -152,7 +152,7 @@ public class RandomValueGenerator
 			while (elemNameNums.Contains(elemNameNumber))
 				elemNameNumber = GetInt32();
 
-			dataRecords[i] = GetDataRecordWithRandomValue($"{name}.{elemNameNumber}");
+			dataRecords.Add(GetDataRecordWithRandomValue($"{name}.{elemNameNumber}"));
 		}
 
 		return new(GetInt32(), name, dataRecords);
