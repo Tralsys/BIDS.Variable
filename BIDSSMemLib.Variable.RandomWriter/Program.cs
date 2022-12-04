@@ -59,7 +59,7 @@ partial class Program : IDisposable
 					break;
 
 				case "update":
-					UpdateSMemContent(sarr[1..]);
+					UpdateSMemContent(sarr.AsSpan()[1..]);
 					break;
 
 				case "help":
