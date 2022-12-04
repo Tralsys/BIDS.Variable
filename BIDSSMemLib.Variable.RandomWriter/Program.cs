@@ -46,6 +46,9 @@ partial class Program : IDisposable
 		string? s = null;
 		do
 		{
+			if (Console.IsInputRedirected)
+				Console.WriteLine(s);
+
 			string[]? sarr = s?.Split(' ');
 			switch (sarr?[0])
 			{
