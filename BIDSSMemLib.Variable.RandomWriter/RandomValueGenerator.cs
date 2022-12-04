@@ -140,11 +140,11 @@ public class RandomValueGenerator
 
 	public VariableStructure GetRandomStructure(string name)
 	{
-		List<VariableStructure.IDataRecord> dataRecords = new();
-
 		int elemCount = Rand.Next(STRUCTURE_ELEM_MAX_COUNT);
 
-		HashSet<int> elemNameNums = new();
+		List<VariableStructure.IDataRecord> dataRecords = new(elemCount);
+
+		HashSet<int> elemNameNums = new(elemCount);
 
 		for (int i = 0; i < elemCount; i++)
 		{
