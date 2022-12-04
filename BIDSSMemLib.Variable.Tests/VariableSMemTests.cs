@@ -42,11 +42,23 @@ public partial class VariableSMemTests
 				.Concat(SampleClass.Expected_vFloat64.GetStructureBytes())
 				.Concat(SampleClass.Expected_vString.GetStructureBytes())
 				.Concat(SampleClass.Expected_vInt32Arr.GetStructureBytes())
+
+				// Padding Between Structre and Content
+				.Concat(new byte[16])
 				.ToArray();
+
+		long ContentAreaLength =
+			sizeof(UInt16)
+			+ sizeof(Int32)
+			+ sizeof(Int64)
+			+ sizeof(Double)
+			// vString length info
+			+ sizeof(Int32)
+			// vInt32Arr length info
+			+ sizeof(Int32);
 
 		byte[] expectedContentAreaOffset = BitConverter.GetBytes(
 			(long)expectedMemory.Length
-			+ VariableSMem.PaddingBetweenStructreAndContent
 		);
 		expectedContentAreaOffset.CopyTo(expectedMemory, 0);
 
@@ -55,7 +67,8 @@ public partial class VariableSMemTests
 			// 領域の前方は構造情報が書き込まれた状態
 			// 構造情報以外はゼロ埋めされた状態
 			Assert.That(SMemIF.Memory[0..(expectedMemory.Length)], Is.EquivalentTo(expectedMemory));
-			Assert.That(SMemIF.Memory[(expectedMemory.Length)..], Is.All.EqualTo((byte)0));
+			Assert.That(SMemIF.Memory[(expectedMemory.Length)..(expectedMemory.Length + sizeof(long))], Is.EquivalentTo(BitConverter.GetBytes(ContentAreaLength)));
+			Assert.That(SMemIF.Memory[(expectedMemory.Length + sizeof(long))..], Is.All.EqualTo((byte)0));
 		});
 	}
 
