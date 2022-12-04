@@ -144,7 +144,7 @@ partial class Program : IDisposable
 
 			VariableStructurePayload payload = rand.GetRandomPayload(smem.Structure);
 
-			Log(AppendSMemInfoAndStructure(new("New Value\n"), index, smem.Structure.Name, payload.Values));
+			Log(AppendSMemInfoAndStructure(new("New Values are Generated\n"), index, smem.Structure.Name, payload.Values));
 			payloads.Add(index, (smem, payload));
 		}
 
