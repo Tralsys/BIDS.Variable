@@ -79,7 +79,10 @@ partial class Program : IDisposable
 
 		int i = 0;
 		foreach (VariableSMem smem in VariableSMemDic.Values)
+		{
 			AppendSMemInfoAndStructure(builder, i++, smem);
+			builder.AppendLine();
+		}
 
 		Log(builder);
 	}
