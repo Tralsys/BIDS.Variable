@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
+using System.Threading;
 using BIDS.Parser.Variable;
 
 using TR.BIDSSMemLib;
@@ -24,7 +24,7 @@ partial class Program : IDisposable
 	readonly SortedDictionary<string, VariableSMem> VariableSMemDic = new();
 	readonly VariableSMemNameManager NameManager = new();
 
-	const string COMMAND_LIST = "COMMAND LIST : add / + / update [index1, index2...] / ls / help / ? / exit / quit";
+	const string COMMAND_LIST = "COMMAND LIST : add / + / update [index1, index2...] / sleep [time_ms] / ls / help / ? / exit / quit";
 	public void Run(string prompt)
 	{
 		Log("VariableSMem Random Writer Starting...");
@@ -60,6 +60,13 @@ partial class Program : IDisposable
 				case "add":
 				case "+":
 					AddNewSMem();
+					break;
+
+				case "sleep":
+					if (sarr.Length >= 2 && int.TryParse(sarr[1], out int time_ms))
+						Thread.Sleep(time_ms);
+					else
+						Log("Sleep Time Input was Invalid", ConsoleColor.Red);
 					break;
 
 				case "update":
