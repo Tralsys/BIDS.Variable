@@ -21,7 +21,7 @@ public class RandomValueGenerator
 	}
 
 	public bool GetBool()
-		=> Rand.Next(1) == 1;
+		=> Rand.Next(2) == 1;
 
 	public Half GetFloat16()
 		=> Half.Parse((Rand.NextSingle() * GetSign()).ToString());
@@ -35,16 +35,16 @@ public class RandomValueGenerator
 
 	const int FRACTION_MINMAX = 0xFF;
 	public double GetFraction()
-	=> double.Parse($"1e{Rand.Next(-FRACTION_MINMAX, FRACTION_MINMAX)}");
+	=> double.Parse($"1e{Rand.Next(-FRACTION_MINMAX, FRACTION_MINMAX + 1)}");
 
 	public sbyte GetInt8()
-		=> (sbyte)Rand.Next(sbyte.MinValue, sbyte.MaxValue);
+		=> (sbyte)Rand.Next(sbyte.MinValue, (int)sbyte.MaxValue + 1);
 	public short GetInt16()
-		=> (short)Rand.Next(short.MinValue, short.MaxValue);
+		=> (short)Rand.Next(short.MinValue, (int)short.MaxValue + 1);
 	public int GetInt32()
-		=> Rand.Next(int.MinValue, int.MaxValue);
+		=> GetBool() ? Rand.Next(int.MinValue, 0) : Rand.Next();
 	public long GetInt64()
-		=> Rand.NextInt64(long.MinValue, long.MaxValue);
+		=> GetBool() ? Rand.NextInt64(long.MinValue, 0) : Rand.NextInt64();
 
 	public byte GetUInt8()
 	=> (byte)Rand.Next(byte.MaxValue);
@@ -134,7 +134,7 @@ public class RandomValueGenerator
 	};
 
 	public VariableDataType GetDataType()
-		=> DataTypes[Rand.Next(DataTypes.Length - 1)];
+		=> DataTypes[Rand.Next(DataTypes.Length)];
 
 	const int STRUCTURE_ELEM_MAX_COUNT = 15;
 
@@ -188,7 +188,7 @@ public class RandomValueGenerator
 	{
 		VariableStructurePayload payload = new(structure.DataTypeId);
 
-		int modifyDecisionMaxValue = (structure.Records.Count / 2);
+		int modifyDecisionMaxValue = (structure.Records.Count / 2) + 1;
 
 		foreach (var v in structure.Records)
 		{
