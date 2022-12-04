@@ -21,8 +21,11 @@ partial class Program : IDisposable
 	}
 
 	readonly RandomValueGenerator rand = new();
-	readonly SortedDictionary<string, VariableSMem> VariableSMemDic = new();
+	readonly List<VariableSMem> VariableSMemList = new();
 	readonly VariableSMemNameManager NameManager = new();
+
+	bool IsSMemExists(string name)
+		=> VariableSMemList.FirstOrDefault(v => v.Structure.Name == name) is not null;
 
 	const string COMMAND_LIST = "COMMAND LIST : add / + / update [index1, index2...] / sleep [time_ms] / ls / help / ? / exit / quit";
 	public void Run(string prompt)
@@ -31,17 +34,17 @@ partial class Program : IDisposable
 
 		foreach (var v in NameManager)
 		{
-			if (VariableSMemDic.ContainsKey(v.Name))
+			if (IsSMemExists(v.Name))
 				continue;
 
 			VariableSMem smem = VariableSMem.CreateWithoutType(v.Name);
 
 			// 初期値の読み込みを行う
 			_ = smem.ReadFromSMem();
-			VariableSMemDic.Add(v.Name, smem);
+			VariableSMemList.Add(smem);
 		}
 
-		Log($"Init Complete.  There are already {VariableSMemDic.Count} instance");
+		Log($"Init Complete.  There are already {VariableSMemList.Count} instance");
 
 		string? s = null;
 		do
@@ -89,10 +92,10 @@ partial class Program : IDisposable
 
 	void ShowSMemList()
 	{
-		StringBuilder builder = new($"There are {VariableSMemDic.Count} Instances\n");
+		StringBuilder builder = new($"There are {VariableSMemList.Count} Instances\n");
 
 		int i = 0;
-		foreach (VariableSMem smem in VariableSMemDic.Values)
+		foreach (VariableSMem smem in VariableSMemList)
 		{
 			AppendSMemInfoAndStructure(builder, i++, smem);
 			builder.AppendLine();
@@ -104,7 +107,7 @@ partial class Program : IDisposable
 	void AddNewSMem()
 	{
 		string id = rand.GetInt32().ToString();
-		while (VariableSMemDic.ContainsKey(id))
+		while (IsSMemExists(id))
 			id = rand.GetInt32().ToString();
 
 
@@ -112,7 +115,7 @@ partial class Program : IDisposable
 
 		VariableSMem smem = new(id, 0x1000, structure);
 		NameManager.AddName(id);
-		VariableSMemDic.Add(id, smem);
+		VariableSMemList.Add(smem);
 
 		StringBuilder builder = new($"SMem `{id}` is successfully added to SMem with structure shown below:\n");
 		AppendSMemStructure(builder, structure.Records);
@@ -137,9 +140,9 @@ partial class Program : IDisposable
 				continue;
 			}
 
-			if (index < 0 || VariableSMemDic.Count <= index)
+			if (index < 0 || VariableSMemList.Count <= index)
 			{
-				Log($"Index out of range (str:`{indexStr}` / Current SMem Instance Count: {VariableSMemDic.Count})", ConsoleColor.Red);
+				Log($"Index out of range (str:`{indexStr}` / Current SMem Instance Count: {VariableSMemList.Count})", ConsoleColor.Red);
 				continue;
 			}
 
@@ -149,8 +152,7 @@ partial class Program : IDisposable
 				continue;
 			}
 
-			var kvp = VariableSMemDic.ElementAt(index);
-			VariableSMem smem = kvp.Value;
+			VariableSMem smem = VariableSMemList[index];
 
 			VariableStructurePayload payload = rand.GetRandomPayload(smem.Structure);
 
@@ -176,9 +178,9 @@ partial class Program : IDisposable
 	public void Dispose()
 	{
 		NameManager.Dispose();
-		foreach (var v in VariableSMemDic.Values)
+		foreach (var v in VariableSMemList)
 			v.Dispose();
-		VariableSMemDic.Clear();
+		VariableSMemList.Clear();
 		Log("Object Disposed");
 	}
 
