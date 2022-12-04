@@ -28,19 +28,26 @@ jobs:
           - '6.0.x'
         framework:
           - net6.0
+
         include:
           - project: BIDS.Parser.Variable.Tests
-            os:
-              - ubuntu-latest
-              - windows-latest
+            os: ubuntu-latest
             dotnet-version: '3.1.x'
             framework: netcoreapp3.1
           - project: BIDS.Parser.Variable.Tests
-            os:
-              - ubuntu-latest
-              - windows-latest
+            os: windows-latest
+            dotnet-version: '3.1.x'
+            framework: netcoreapp3.1
+
+          - project: BIDS.Parser.Variable.Tests
+            os: ubuntu-latest
             dotnet-version: '2.1.x'
             framework: netcoreapp2.1
+          - project: BIDS.Parser.Variable.Tests
+            os: windows-latest
+            dotnet-version: '2.1.x'
+            framework: netcoreapp2.1
+
           - project: BIDS.Parser.Variable.Tests
             os: windows-latest
             dotnet-version: '6.0.x'
