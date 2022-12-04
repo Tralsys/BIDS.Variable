@@ -29,7 +29,7 @@ public class ArrayStructureTests
 			0
 		};
 
-		VariableStructure.ArrayStructure data = new(type, name);
+		VariableStructure.ArrayDataRecord data = new(type, name);
 
 		Assert.That(data.GetStructureBytes(), Is.EquivalentTo(expected));
 	}
@@ -85,7 +85,7 @@ public class ArrayStructureTests
 		})]
 	public void GetBytesTest(VariableDataType type, Array value, byte[] expected)
 	{
-		VariableStructure.ArrayStructure data = new(type, "test", value);
+		VariableStructure.ArrayDataRecord data = new(type, "test", value);
 
 		Assert.That(data.GetBytes(), Is.EquivalentTo(expected));
 	}

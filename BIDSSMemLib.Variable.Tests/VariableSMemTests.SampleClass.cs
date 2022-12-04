@@ -23,11 +23,11 @@ public partial class VariableSMemTests
 			= new(VariableDataType.Float64, "vFloat64");
 
 		public string? vString;
-		public static readonly VariableStructure.ArrayStructure Expected_vString
+		public static readonly VariableStructure.ArrayDataRecord Expected_vString
 			= new(VariableDataType.UInt8, "vString");
 
 		public int[]? vInt32Arr;
-		public static readonly VariableStructure.ArrayStructure Expected_vInt32Arr
+		public static readonly VariableStructure.ArrayDataRecord Expected_vInt32Arr
 			= new(VariableDataType.Int32, "vInt32Arr");
 
 		public override bool Equals(object? obj)

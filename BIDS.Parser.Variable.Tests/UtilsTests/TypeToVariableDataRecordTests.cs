@@ -17,7 +17,7 @@ public class TypeToVariableDataRecordTests
 	{
 		Assert.That(
 			Utils.ToVariableDataRecord(type, name),
-			Is.EqualTo(new VariableStructure.ArrayStructure(expectedDataType, name))
+			Is.EqualTo(new VariableStructure.ArrayDataRecord(expectedDataType, name))
 		);
 	}
 

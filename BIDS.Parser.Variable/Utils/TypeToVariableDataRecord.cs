@@ -25,12 +25,12 @@ public static partial class Utils
 			if (elemDataType == VariableDataType.Array)
 				throw new NotSupportedException("Currently, nested array is not supported.");
 
-			return new VariableStructure.ArrayStructure(elemDataType, name);
+			return new VariableStructure.ArrayDataRecord(elemDataType, name);
 		}
 
 		if (memberType == typeof(string))
 		{
-			return new VariableStructure.ArrayStructure(VariableDataType.UInt8, name);
+			return new VariableStructure.ArrayDataRecord(VariableDataType.UInt8, name);
 		}
 
 		return new VariableStructure.DataRecord(memberType.ToVariableDataType(), name);

@@ -56,7 +56,7 @@ public class VariableStructureTests
 		string structureName = "SampleStrcuture";
 		VariableStructure structure = new(0, structureName, new List<VariableStructure.IDataRecord>()
 		{
-			new VariableStructure.ArrayStructure(type, name, null)
+			new VariableStructure.ArrayDataRecord(type, name, null)
 		});
 
 		byte[] bytes = new byte[]
@@ -83,7 +83,7 @@ public class VariableStructureTests
 		VariableStructurePayload actual = structure.With(bytes.AsSpan());
 
 		Assert.That(actual.TryGetValue(name, out var actualRecord), Is.True);
-		if (actualRecord is not VariableStructure.ArrayStructure actualArrayRecord)
+		if (actualRecord is not VariableStructure.ArrayDataRecord actualArrayRecord)
 		{
 			Assert.Fail("actualRecord was not ArrayStructure");
 			return;
@@ -101,7 +101,7 @@ public class VariableStructureTests
 		VariableStructure structure = new(0, structureName, new List<VariableStructure.IDataRecord>()
 		{
 			new VariableStructure.DataRecord(VariableDataType.Boolean, "Bool", null),
-			new VariableStructure.ArrayStructure(VariableDataType.UInt8, "Array", null),
+			new VariableStructure.ArrayDataRecord(VariableDataType.UInt8, "Array", null),
 			new VariableStructure.DataRecord(VariableDataType.Int32, "Int32", null),
 		});
 
@@ -145,7 +145,7 @@ public class VariableStructureTests
 			Assert.That(actual["Bool"], Is.EqualTo(new VariableStructure.DataRecord(VariableDataType.Boolean, "Bool", true)));
 			Assert.That(actual["Int32"], Is.EqualTo(new VariableStructure.DataRecord(VariableDataType.Int32, "Int32", -2)));
 
-			if (actual["Array"] is not VariableStructure.ArrayStructure arrayStructure)
+			if (actual["Array"] is not VariableStructure.ArrayDataRecord arrayStructure)
 				Assert.Fail("dataName='Array' was not VariableStructure.ArrayStructure");
 			else
 				Assert.That(arrayStructure.ValueArray, Is.EquivalentTo(expected_array));

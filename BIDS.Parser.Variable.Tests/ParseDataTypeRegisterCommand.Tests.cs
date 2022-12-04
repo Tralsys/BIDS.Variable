@@ -174,7 +174,7 @@ public class ParseDataTypeRegisterCommandTests
 		Assert.That(actual.Records.Count, Is.EqualTo(1));
 
 		Assert.That(actual.Records[0], Is.EqualTo(
-			new VariableStructure.ArrayStructure(VariableDataType.Int32, "a", null))
+			new VariableStructure.ArrayDataRecord(VariableDataType.Int32, "a", null))
 		);
 	}
 
@@ -266,7 +266,7 @@ public class ParseDataTypeRegisterCommandTests
 			new VariableStructure.DataRecord(VariableDataType.UInt32, "h", null),
 			new VariableStructure.DataRecord(VariableDataType.UInt64, "i", null),
 
-			new VariableStructure.ArrayStructure(VariableDataType.Float16, "array", null),
+			new VariableStructure.ArrayDataRecord(VariableDataType.Float16, "array", null),
 
 			new VariableStructure.DataRecord(VariableDataType.Float16, "j", null),
 			new VariableStructure.DataRecord(VariableDataType.Float32, "k", null),

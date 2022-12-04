@@ -61,7 +61,7 @@ public class VariableSMemWatcher : IDisposable
 					CurrentValues[v.Name] = data.Value;
 				}
 			}
-			else if (v is VariableStructure.ArrayStructure arr)
+			else if (v is VariableStructure.ArrayDataRecord arr)
 			{
 				Array? lastValue = CurrentValues[v.Name] as Array;
 

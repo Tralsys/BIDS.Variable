@@ -38,7 +38,7 @@ public partial record VariableStructure
 		new T[]? ValueArray { set; }
 	}
 
-	public record ArrayStructure(VariableDataType ElemType, string Name, Array? ValueArray = null) : IArrayDataRecordWithValue, IArrayDataRecordWithValue_HasWithNewValue
+	public record ArrayDataRecord(VariableDataType ElemType, string Name, Array? ValueArray = null) : IArrayDataRecordWithValue, IArrayDataRecordWithValue_HasWithNewValue
 	{
 		VariableDataType IDataRecord.Type => VariableDataType.Array;
 

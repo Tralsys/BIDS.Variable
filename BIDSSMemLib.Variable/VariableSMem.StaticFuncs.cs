@@ -56,7 +56,7 @@ public partial class VariableSMem
 		=> dataRecord switch
 		{
 			VariableStructure.DataRecord v => v.Value,
-			VariableStructure.ArrayStructure v =>
+			VariableStructure.ArrayDataRecord v =>
 				(isString && v.ValueArray is byte[] arr)
 				? DefaultEncoding.GetString(arr)
 				: v.ValueArray,
@@ -73,7 +73,7 @@ public partial class VariableSMem
 
 		if (memberVDType == VariableDataType.Array)
 		{
-			if (memberDataRecord is not VariableStructure.ArrayStructure arrayStructure)
+			if (memberDataRecord is not VariableStructure.ArrayDataRecord arrayStructure)
 				throw new Exception("Type mismatch (Given member was array, but dataRecord was not ArrayStructure)");
 
 			if (memberType == typeof(string))
