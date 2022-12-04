@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using BIDS.Parser.Variable;
 
@@ -110,4 +111,118 @@ public class RandomValueGenerator
 
 		return arr;
 	}
+
+	#region Variable Structure
+	static readonly VariableDataType[] DataTypes = new VariableDataType[]
+	{
+		VariableDataType.Array,
+
+		VariableDataType.Boolean,
+		VariableDataType.Float16,
+		VariableDataType.Float32,
+		VariableDataType.Float64,
+
+		VariableDataType.Int16,
+		VariableDataType.Int32,
+		VariableDataType.Int64,
+		VariableDataType.Int8,
+
+		VariableDataType.UInt16,
+		VariableDataType.UInt32,
+		VariableDataType.UInt64,
+		VariableDataType.UInt8,
+	};
+
+	public VariableDataType GetDataType()
+		=> DataTypes[Rand.Next(DataTypes.Length - 1)];
+
+	const int STRUCTURE_ELEM_MAX_COUNT = 15;
+
+	public VariableStructure GetRandomStructure(string name)
+	{
+		List<VariableStructure.IDataRecord> dataRecords = new();
+
+		int elemCount = Rand.Next(STRUCTURE_ELEM_MAX_COUNT);
+
+		HashSet<int> elemNameNums = new();
+
+		for (int i = 0; i < elemCount; i++)
+		{
+			int elemNameNumber = GetInt32();
+			while (elemNameNums.Contains(elemNameNumber))
+				elemNameNumber = GetInt32();
+
+			dataRecords[i] = GetDataRecordWithRandomValue($"{name}.{elemNameNumber}");
+		}
+
+		return new(GetInt32(), name, dataRecords);
+	}
+
+	#region GetDataRecord WithRandomValue
+	public VariableStructure.IDataRecord GetDataRecordWithRandomValue(string name)
+		=> GetDataRecordWithRandomValue(name, GetDataType());
+
+	public VariableStructure.IDataRecord GetDataRecordWithRandomValue(string name, VariableDataType type)
+		=> type == VariableDataType.Array ? GetArrayStructureWithRandomValue(name) : new VariableStructure.DataRecord(type, name, Get(type));
+
+	public VariableStructure.ArrayStructure GetArrayStructureWithRandomValue(string name)
+	{
+		VariableDataType type = GetDataType();
+
+		while (type == VariableDataType.Array)
+			type = GetDataType();
+
+		return GetArrayStructureWithRandomValue(name, type);
+	}
+
+	public VariableStructure.ArrayStructure GetArrayStructureWithRandomValue(string name, VariableDataType type)
+	{
+		if (type == VariableDataType.Array)
+			throw new NotSupportedException("Nested Array is not Supported");
+
+		return new VariableStructure.ArrayStructure(type, name, GetArray(type));
+	}
+	#endregion
+
+	public VariableStructurePayload GetRandomPayload(in VariableStructure structure)
+	{
+		VariableStructurePayload payload = new(structure.DataTypeId);
+
+		int modifyDecisionMaxValue = (structure.Records.Count / 2);
+
+		foreach (var v in structure.Records)
+		{
+			if (Rand.Next(modifyDecisionMaxValue) != 0)
+				continue;
+
+			payload.Add(v.Name, WithRandomValue(v));
+		}
+
+		return payload;
+	}
+
+	#region IDataRecord WithRandomValue
+	public VariableStructure.IDataRecord WithRandomValue(in VariableStructure.IDataRecord dataRecord)
+		=> dataRecord switch
+		{
+			VariableStructure.DataRecord v => WithRandomValue(v),
+			VariableStructure.ArrayStructure v => WithRandomValue(v),
+
+			_ => throw new NotSupportedException($"The IDataRecord {dataRecord.GetType()} is not supported")
+		};
+
+	public VariableStructure.DataRecord WithRandomValue(in VariableStructure.DataRecord dataRecord)
+		=> dataRecord with
+		{
+			Value = Get(dataRecord.Type)
+		};
+
+	public VariableStructure.ArrayStructure WithRandomValue(in VariableStructure.ArrayStructure dataRecord)
+		=> dataRecord with
+		{
+			ValueArray = GetArray(dataRecord.ElemType)
+		};
+	#endregion
+
+	#endregion
 }
