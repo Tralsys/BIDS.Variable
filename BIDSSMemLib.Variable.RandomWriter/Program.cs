@@ -34,7 +34,11 @@ partial class Program : IDisposable
 			if (VariableSMemDic.ContainsKey(v.Name))
 				continue;
 
-			VariableSMemDic.Add(v.Name, VariableSMem.CreateWithoutType(v.Name));
+			VariableSMem smem = VariableSMem.CreateWithoutType(v.Name);
+
+			// 初期値の読み込みを行う
+			_ = smem.ReadFromSMem();
+			VariableSMemDic.Add(v.Name, smem);
 		}
 
 		Log($"Init Complete.  There are already {VariableSMemDic.Count} instance");
