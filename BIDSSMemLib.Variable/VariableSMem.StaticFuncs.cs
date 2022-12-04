@@ -81,8 +81,6 @@ public partial class VariableSMem
 				if (value is not string s)
 					throw new Exception($"Given Value is not string or null (GivenType: {memberType})");
 
-				// TODO: Boxingによりパフォーマンス的に好ましくないはず。極力Boxingなしにできるように書き直す
-				// Maybe?: Array型が適切...?
 				return arrayStructure with
 				{
 					ValueArray = DefaultEncoding.GetBytes(s)
