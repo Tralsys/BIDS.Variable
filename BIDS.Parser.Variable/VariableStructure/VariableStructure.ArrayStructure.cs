@@ -26,7 +26,7 @@ public partial record VariableStructure
 	}
 	public interface IArrayDataRecordWithValue_HasWithNewValue<T> : IArrayDataRecordWithValue_HasWithNewValue
 	{
-		IArrayDataRecordWithValue_HasWithNewValue WithNewValue(T[]? NewValue);
+		IArrayDataRecordWithValue_HasWithNewValue<T> WithNewValue(T[]? NewValue);
 	}
 
 	public interface IArrayDataRecordWithValue_CanSet : IArrayDataRecord
