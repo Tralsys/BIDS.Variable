@@ -33,7 +33,7 @@ public class RandomValueGenerator
 	public sbyte GetSign()
 		=> GetBool() ? (sbyte)1 : (sbyte)-1;
 
-	const int FRACTION_MINMAX = 0x400;
+	const int FRACTION_MINMAX = 0xFF;
 	public double GetFraction()
 	=> double.Parse($"1e{Rand.Next(-FRACTION_MINMAX, FRACTION_MINMAX)}");
 
