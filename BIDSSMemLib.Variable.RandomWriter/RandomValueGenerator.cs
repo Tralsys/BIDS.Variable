@@ -205,22 +205,10 @@ public class RandomValueGenerator
 	public VariableStructure.IDataRecord WithRandomValue(in VariableStructure.IDataRecord dataRecord)
 		=> dataRecord switch
 		{
-			VariableStructure.DataRecord v => WithRandomValue(v),
-			VariableStructure.ArrayDataRecord v => WithRandomValue(v),
+			VariableStructure.IDataRecordWithValue_HasWithNewValue v => v.WithNewValue(Get(v.Type)),
+			VariableStructure.IArrayDataRecordWithValue_HasWithNewValue v => v.WithNewValue(GetArray(v.ElemType)),
 
 			_ => throw new NotSupportedException($"The IDataRecord {dataRecord.GetType()} is not supported")
-		};
-
-	public VariableStructure.DataRecord WithRandomValue(in VariableStructure.DataRecord dataRecord)
-		=> dataRecord with
-		{
-			Value = Get(dataRecord.Type)
-		};
-
-	public VariableStructure.ArrayDataRecord WithRandomValue(in VariableStructure.ArrayDataRecord dataRecord)
-		=> dataRecord with
-		{
-			ValueArray = GetArray(dataRecord.ElemType)
 		};
 	#endregion
 

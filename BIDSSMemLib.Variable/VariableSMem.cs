@@ -260,8 +260,8 @@ public partial class VariableSMem : IDisposable
 
 			if (iDataRecord.Type != gotData.Type)
 				continue;
-			if (gotData is VariableStructure.ArrayDataRecord v1
-				&& iDataRecord is VariableStructure.ArrayDataRecord v2
+			if (gotData is VariableStructure.IArrayDataRecord v1
+				&& iDataRecord is VariableStructure.IArrayDataRecord v2
 				&& v1.ElemType != v2.ElemType)
 				continue;
 

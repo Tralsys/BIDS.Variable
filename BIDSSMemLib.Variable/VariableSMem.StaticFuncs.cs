@@ -55,8 +55,8 @@ public partial class VariableSMem
 	internal static object? GetValueObjectFromDataRecord(VariableStructure.IDataRecord dataRecord, bool isString)
 		=> dataRecord switch
 		{
-			VariableStructure.DataRecord v => v.Value,
-			VariableStructure.ArrayDataRecord v =>
+			VariableStructure.IDataRecordWithValue v => v.Value,
+			VariableStructure.IArrayDataRecordWithValue v =>
 				(isString && v.ValueArray is byte[] arr)
 				? DefaultEncoding.GetString(arr)
 				: v.ValueArray,
@@ -73,7 +73,7 @@ public partial class VariableSMem
 
 		if (memberVDType == VariableDataType.Array)
 		{
-			if (memberDataRecord is not VariableStructure.ArrayDataRecord arrayStructure)
+			if (memberDataRecord is not VariableStructure.IArrayDataRecordWithValue_HasWithNewValue arrayStructure)
 				throw new Exception("Type mismatch (Given member was array, but dataRecord was not ArrayStructure)");
 
 			if (memberType == typeof(string))
@@ -81,10 +81,7 @@ public partial class VariableSMem
 				if (value is not string s)
 					throw new Exception($"Given Value is not string or null (GivenType: {memberType})");
 
-				return arrayStructure with
-				{
-					ValueArray = DefaultEncoding.GetBytes(s)
-				};
+				return arrayStructure.WithNewValue(DefaultEncoding.GetBytes(s));
 			}
 
 			// elementの型チェック
@@ -95,20 +92,14 @@ public partial class VariableSMem
 			if (arrayStructure.ElemType != elemVDType)
 				throw new Exception($"Type mismatch (given: {elemVDType} / Initialized with: {arrayStructure.ElemType})");
 
-			return arrayStructure with
-			{
-				ValueArray = value as Array
-			};
+			return arrayStructure.WithNewValue(value as Array);
 		}
 		else
 		{
-			if (memberDataRecord is not VariableStructure.DataRecord dataRecord)
+			if (memberDataRecord is not VariableStructure.IDataRecordWithValue_HasWithNewValue dataRecord)
 				throw new Exception("Type mismatch (Given member was normal data, but dataRecord was not DataRecord)");
 
-			return dataRecord with
-			{
-				Value = value
-			};
+			return dataRecord.WithNewValue(value);
 		}
 	}
 }
