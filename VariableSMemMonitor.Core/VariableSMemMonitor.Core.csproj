@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
 		<LangVersion>10</LangVersion>
-		<Version>1.3.0</Version>
+		<Version>1.4.0</Version>
 		<Nullable>enable</Nullable>
 		<AssemblyName>TR.VariableSMemMonitor.Core</AssemblyName>
 		<RootNamespace>TR.VariableSMemMonitor.Core</RootNamespace>
