@@ -10,14 +10,15 @@ namespace TR.VariableSMemMonitor.Core;
 
 public class VariableSMemWatcher : IDisposable
 {
-	public record ChangedValues(string SMemName, VariableStructurePayload RawPayload, Dictionary<string, object> ChangedValuesDic);
+	public record ChangedValues(string SMemName, VariableStructurePayload RawPayload, IReadOnlyDictionary<string, object?> ChangedValuesDic);
 
 	internal VariableSMem VSMem { get; }
 	public VariableStructure Structure => VSMem.Structure;
 
 	public string SMemName { get; }
 
-	Dictionary<string, object?> CurrentValues { get; }
+	Dictionary<string, object?> _CurrentValues { get; }
+	public IReadOnlyDictionary<string, object?> CurrentValues => _CurrentValues;
 
 	public VariableSMemWatcher(string SMemName) : this(VariableSMem.CreateWithoutType(SMemName)) { }
 
@@ -33,11 +34,11 @@ public class VariableSMemWatcher : IDisposable
 
 		VSMem = vsMem;
 
-		CurrentValues = new();
+		_CurrentValues = new();
 
 		foreach (var v in VSMem.Structure.Records)
 		{
-			CurrentValues.Add(v.Name, v switch
+			_CurrentValues.Add(v.Name, v switch
 			{
 				VariableStructure.IDataRecordWithValue dataRecord => dataRecord.Value,
 				VariableStructure.IArrayDataRecordWithValue dataRecord => dataRecord.ValueArray,
@@ -52,38 +53,38 @@ public class VariableSMemWatcher : IDisposable
 
 	public ChangedValues CheckForValueChange(VariableStructurePayload payload)
 	{
-		Dictionary<string, object> ChangedValues = new();
+		Dictionary<string, object?> ChangedValues = new();
 
 		foreach (var v in payload.Values)
 		{
 			if (v is VariableStructure.IDataRecordWithValue data)
 			{
-				object? lastValue = CurrentValues[v.Name];
+				object? lastValue = _CurrentValues[v.Name];
 
 				if (lastValue is null || !Equals(lastValue, data.Value))
 				{
 					if (data.Value is not null)
 						ChangedValues[v.Name] = data.Value;
 
-					CurrentValues[v.Name] = data.Value;
+					_CurrentValues[v.Name] = data.Value;
 				}
 			}
 			else if (v is VariableStructure.IArrayDataRecordWithValue arr)
 			{
-				Array? lastValue = CurrentValues[v.Name] as Array;
+				Array? lastValue = _CurrentValues[v.Name] as Array;
 
 				if (lastValue is null)
 				{
 					if (arr.ValueArray is not null)
 						ChangedValues[v.Name] = arr.ValueArray;
 
-					CurrentValues[v.Name] = arr.ValueArray;
+					_CurrentValues[v.Name] = arr.ValueArray;
 				}
 				else if (arr.ValueArray is not null && AreTwoArrayNotSame(lastValue, arr.ValueArray))
 				{
 					ChangedValues[v.Name] = arr.ValueArray;
 
-					CurrentValues[v.Name] = arr.ValueArray;
+					_CurrentValues[v.Name] = arr.ValueArray;
 				}
 			}
 		}
