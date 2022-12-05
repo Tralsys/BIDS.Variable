@@ -18,20 +18,15 @@ public class VariableSMemWatcher : IDisposable
 
 	Dictionary<string, object?> CurrentValues { get; }
 
-	public VariableSMemWatcher(string SMemName) : this(SMemName, null) { }
+	public VariableSMemWatcher(string SMemName) : this(VariableSMem.CreateWithoutType(SMemName)) { }
 
-	public VariableSMemWatcher(ISMemIF SMemIF) : this(SMemIF.SMemName, SMemIF) { }
+	public VariableSMemWatcher(ISMemIF SMemIF) : this(VariableSMem.CreateWithoutType(SMemIF)) { }
 
-	private VariableSMemWatcher(string SMemName, ISMemIF? SMemIF)
+	public VariableSMemWatcher(VariableSMem vsMem)
 	{
-		if (string.IsNullOrEmpty(SMemName))
-			throw new ArgumentNullException(nameof(SMemName), $"{nameof(SMemName)} cannot be NULL or Empty");
+		this.SMemName = vsMem.Name;
 
-		this.SMemName = SMemName;
-
-		VSMem = SMemIF is null
-			? VariableSMem.CreateWithoutType(SMemName)
-			: VariableSMem.CreateWithoutType(SMemIF);
+		VSMem = vsMem;
 
 		CurrentValues = new();
 
