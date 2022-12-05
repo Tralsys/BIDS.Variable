@@ -32,7 +32,13 @@ public class VariableSMemWatcher : IDisposable
 
 		foreach (var v in VSMem.Structure.Records)
 		{
-			CurrentValues.Add(v.Name, null);
+			CurrentValues.Add(v.Name, v switch
+			{
+				VariableStructure.IDataRecordWithValue dataRecord => dataRecord.Value,
+				VariableStructure.IArrayDataRecordWithValue dataRecord => dataRecord.ValueArray,
+
+				_ => null,
+			});
 		}
 	}
 
