@@ -55,16 +55,6 @@ public class VariableSMemAutoReader : IDisposable
 	{
 		while (!disposingValue)
 		{
-			// 先にValueの更新検知を行う
-			// -> Nameの追加検知はValueの更新検知を兼ねているため、NameとValueが連続するのは無駄だから
-			foreach (var watcher in VariableSMemWatcherDic.Values)
-			{
-				var v = watcher.CheckForValueChange();
-
-				if (v.ChangedValuesDic.Count > 0)
-					ValueChanged?.Invoke(this, v);
-			}
-
 			IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
 
 			foreach (var newName in newNames)
@@ -73,6 +63,14 @@ public class VariableSMemAutoReader : IDisposable
 				VariableSMemWatcherDic.Add(newName, vsmemWatcher);
 
 				NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
+			}
+
+			foreach (var watcher in VariableSMemWatcherDic.Values)
+			{
+				var v = watcher.CheckForValueChange();
+
+				if (v.ChangedValuesDic.Count > 0)
+					ValueChanged?.Invoke(this, v);
 			}
 
 			Thread.Sleep(Interval_ms);

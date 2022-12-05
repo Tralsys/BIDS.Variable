@@ -38,6 +38,7 @@ public class VariableSMemWatcher : IDisposable
 
 		foreach (var v in VSMem.Structure.Records)
 		{
+			// Structure指定で初期化されて、かつValue / ValueArrayに値が保存されていた場合に限り初期値が設定される
 			_CurrentValues.Add(v.Name, v switch
 			{
 				VariableStructure.IDataRecordWithValue dataRecord => dataRecord.Value,
