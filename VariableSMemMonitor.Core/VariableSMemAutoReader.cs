@@ -51,7 +51,7 @@ public class VariableSMemAutoReader : IDisposable
 		return AutoReadTask;
 	}
 
-	void AutoReader()
+	async Task AutoReader()
 	{
 		while (!disposingValue)
 		{
@@ -73,7 +73,7 @@ public class VariableSMemAutoReader : IDisposable
 					ValueChanged?.Invoke(this, v);
 			}
 
-			Thread.Sleep(Interval_ms);
+			await Task.Delay(Interval_ms);
 		}
 	}
 
