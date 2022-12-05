@@ -42,9 +42,10 @@ public class VariableSMemWatcher : IDisposable
 	}
 
 	public ChangedValues CheckForValueChange()
-	{
-		VariableStructurePayload payload = VSMem.ReadFromSMem();
+		=> CheckForValueChange(VSMem.ReadFromSMem());
 
+	public ChangedValues CheckForValueChange(VariableStructurePayload payload)
+	{
 		Dictionary<string, object> ChangedValues = new();
 
 		foreach (var v in payload.Values)
