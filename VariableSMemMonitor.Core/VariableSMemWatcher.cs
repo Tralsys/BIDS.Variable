@@ -22,6 +22,10 @@ public class VariableSMemWatcher : IDisposable
 
 	public VariableSMemWatcher(ISMemIF SMemIF) : this(VariableSMem.CreateWithoutType(SMemIF)) { }
 
+	// TODO: 0x1000 = 4096byte以上の場合に対応する
+	// 現状、どうやってCapacityの必要量を推定するかを決めれない
+	public VariableSMemWatcher(VariableStructure structure) : this(new VariableSMem(structure.Name, 0x1000, structure)) { }
+
 	public VariableSMemWatcher(VariableSMem vsMem)
 	{
 		this.SMemName = vsMem.Name;
