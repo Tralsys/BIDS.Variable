@@ -75,7 +75,7 @@ public class VariableSMemAutoReader : IDisposable
 			{
 				var v = watcher.CheckForValueChange();
 
-				if (v.ChangedValuesDic.Count >= 0)
+				if (v.ChangedValuesDic.Count > 0)
 					ValueChanged?.Invoke(this, new(watcher.SMemName, watcher.Structure, v.RawPayload));
 			}
 
