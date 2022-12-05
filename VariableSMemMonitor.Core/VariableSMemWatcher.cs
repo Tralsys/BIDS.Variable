@@ -13,6 +13,7 @@ public class VariableSMemWatcher : IDisposable
 	public record ChangedValues(string SMemName, VariableStructurePayload RawPayload, Dictionary<string, object> ChangedValuesDic);
 
 	internal VariableSMem VSMem { get; }
+	public VariableStructure Structure => VSMem.Structure;
 
 	public string SMemName { get; }
 
