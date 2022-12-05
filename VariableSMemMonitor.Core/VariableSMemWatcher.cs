@@ -10,7 +10,7 @@ namespace TR.VariableSMemMonitor.Core;
 
 public class VariableSMemWatcher : IDisposable
 {
-	public record ChangedValues(string SMemName, VariableStructurePayload RawPayload, IReadOnlyDictionary<string, object?> ChangedValuesDic);
+	public record ChangedValues(string SMemName, VariableStructure Structure, VariableStructurePayload RawPayload, IReadOnlyDictionary<string, object?> ChangedValuesDic);
 
 	internal VariableSMem VSMem { get; }
 	public VariableStructure Structure => VSMem.Structure;
@@ -91,6 +91,7 @@ public class VariableSMemWatcher : IDisposable
 
 		return new(
 			SMemName: this.SMemName,
+			Structure: this.Structure,
 			RawPayload: payload,
 			ChangedValuesDic: ChangedValues
 		);
