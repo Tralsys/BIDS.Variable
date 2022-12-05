@@ -165,7 +165,7 @@ public class RandomValueGenerator
 	public VariableStructure.IDataRecord GetDataRecordWithRandomValue(string name, VariableDataType type)
 		=> type == VariableDataType.Array ? GetArrayStructureWithRandomValue(name) : new VariableStructure.DataRecord(type, name, Get(type));
 
-	public VariableStructure.ArrayStructure GetArrayStructureWithRandomValue(string name)
+	public VariableStructure.ArrayDataRecord GetArrayStructureWithRandomValue(string name)
 	{
 		VariableDataType type = GetDataType();
 
@@ -175,12 +175,12 @@ public class RandomValueGenerator
 		return GetArrayStructureWithRandomValue(name, type);
 	}
 
-	public VariableStructure.ArrayStructure GetArrayStructureWithRandomValue(string name, VariableDataType type)
+	public VariableStructure.ArrayDataRecord GetArrayStructureWithRandomValue(string name, VariableDataType type)
 	{
 		if (type == VariableDataType.Array)
 			throw new NotSupportedException("Nested Array is not Supported");
 
-		return new VariableStructure.ArrayStructure(type, name, GetArray(type));
+		return new VariableStructure.ArrayDataRecord(type, name, GetArray(type));
 	}
 	#endregion
 
@@ -205,22 +205,10 @@ public class RandomValueGenerator
 	public VariableStructure.IDataRecord WithRandomValue(in VariableStructure.IDataRecord dataRecord)
 		=> dataRecord switch
 		{
-			VariableStructure.DataRecord v => WithRandomValue(v),
-			VariableStructure.ArrayStructure v => WithRandomValue(v),
+			VariableStructure.IDataRecordWithValue_HasWithNewValue v => v.WithNewValue(Get(v.Type)),
+			VariableStructure.IArrayDataRecordWithValue_HasWithNewValue v => v.WithNewValue(GetArray(v.ElemType)),
 
 			_ => throw new NotSupportedException($"The IDataRecord {dataRecord.GetType()} is not supported")
-		};
-
-	public VariableStructure.DataRecord WithRandomValue(in VariableStructure.DataRecord dataRecord)
-		=> dataRecord with
-		{
-			Value = Get(dataRecord.Type)
-		};
-
-	public VariableStructure.ArrayStructure WithRandomValue(in VariableStructure.ArrayStructure dataRecord)
-		=> dataRecord with
-		{
-			ValueArray = GetArray(dataRecord.ElemType)
 		};
 	#endregion
 

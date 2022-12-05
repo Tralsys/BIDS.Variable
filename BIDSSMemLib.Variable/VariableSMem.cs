@@ -195,7 +195,15 @@ public partial class VariableSMem : IDisposable
 		if (!SMemIF.ReadArray(ContentAreaOffset + sizeof(long), content, 0, content.Length))
 			throw new AccessViolationException("Read from SMem failed");
 
-		return Structure.With(content);
+		VariableStructurePayload gotPayload = Structure.With(content);
+
+		for (int i = 0; i < _Members.Count; i++)
+		{
+			if (gotPayload.TryGetValue(_Members[i].Name, out VariableStructure.IDataRecord? dataRecord))
+				_Members[i] = dataRecord;
+		}
+
+		return gotPayload;
 	}
 
 	/// <summary>
@@ -260,8 +268,8 @@ public partial class VariableSMem : IDisposable
 
 			if (iDataRecord.Type != gotData.Type)
 				continue;
-			if (gotData is VariableStructure.ArrayStructure v1
-				&& iDataRecord is VariableStructure.ArrayStructure v2
+			if (gotData is VariableStructure.IArrayDataRecord v1
+				&& iDataRecord is VariableStructure.IArrayDataRecord v2
 				&& v1.ElemType != v2.ElemType)
 				continue;
 

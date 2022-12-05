@@ -49,7 +49,7 @@ public class VariableSMemWatcher : IDisposable
 
 		foreach (var v in payload.Values)
 		{
-			if (v is VariableStructure.DataRecord data)
+			if (v is VariableStructure.IDataRecordWithValue data)
 			{
 				object? lastValue = CurrentValues[v.Name];
 
@@ -61,7 +61,7 @@ public class VariableSMemWatcher : IDisposable
 					CurrentValues[v.Name] = data.Value;
 				}
 			}
-			else if (v is VariableStructure.ArrayStructure arr)
+			else if (v is VariableStructure.IArrayDataRecordWithValue arr)
 			{
 				Array? lastValue = CurrentValues[v.Name] as Array;
 

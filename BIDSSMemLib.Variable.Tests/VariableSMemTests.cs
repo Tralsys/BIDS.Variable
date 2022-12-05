@@ -282,10 +282,10 @@ public partial class VariableSMemTests
 		ArrayStructureInPayloadTestUtil(payload, nameof(SampleClass.vInt32Arr), SampleClass.Expected_vInt32Arr, SampleData.vInt32Arr);
 	}
 
-	static void ArrayStructureInPayloadTestUtil(VariableStructurePayload payload, string name, VariableStructure.ArrayStructure expectedStructure, Array expectedArray)
+	static void ArrayStructureInPayloadTestUtil(VariableStructurePayload payload, string name, VariableStructure.ArrayDataRecord expectedStructure, Array expectedArray)
 	{
 		Assert.That(payload, Does.ContainKey(name));
-		VariableStructure.ArrayStructure? actual = payload[name] as VariableStructure.ArrayStructure;
+		VariableStructure.ArrayDataRecord? actual = payload[name] as VariableStructure.ArrayDataRecord;
 
 		Assert.That(actual, Is.EqualTo(expectedStructure with
 		{

@@ -6,7 +6,35 @@ namespace BIDS.Parser.Variable;
 
 public partial record VariableStructure
 {
-	public record DataRecord(VariableDataType Type, string Name, object? Value = null) : IDataRecord
+	public interface IDataRecordWithValue : IDataRecord
+	{
+		object? Value { get; }
+	}
+	public interface IDataRecordWithValue<T> : IDataRecordWithValue
+	{
+		new T? Value { get; }
+	}
+
+
+	public interface IDataRecordWithValue_HasWithNewValue : IDataRecord
+	{
+		IDataRecordWithValue_HasWithNewValue WithNewValue(object? NewValue);
+	}
+	public interface IDataRecordWithValue_HasWithNewValue<T> : IDataRecordWithValue_HasWithNewValue
+	{
+		IDataRecordWithValue_HasWithNewValue<T> WithNewValue(T? NewValue);
+	}
+
+	public interface IDataRecordWithValue_CanSet : IDataRecord
+	{
+		object? Value { set; }
+	}
+	public interface IDataRecordWithValue_CanSet<T> : IDataRecordWithValue_CanSet
+	{
+		new T? Value { set; }
+	}
+
+	public record DataRecord(VariableDataType Type, string Name, object? Value = null) : IDataRecordWithValue, IDataRecordWithValue_HasWithNewValue
 	{
 		public IDataRecord With(ref ReadOnlySpan<byte> bytes)
 		{
@@ -21,5 +49,11 @@ public partial record VariableStructure
 
 		public IEnumerable<byte> GetBytes()
 			=> this.Type.GetBytes(this.Value);
+
+		public IDataRecordWithValue_HasWithNewValue WithNewValue(object? NewValue)
+			=> this with
+			{
+				Value = NewValue
+			};
 	}
 }

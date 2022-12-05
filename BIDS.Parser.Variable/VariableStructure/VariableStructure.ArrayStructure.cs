@@ -6,7 +6,39 @@ namespace BIDS.Parser.Variable;
 
 public partial record VariableStructure
 {
-	public record ArrayStructure(VariableDataType ElemType, string Name, Array? ValueArray = null) : IDataRecord
+	public interface IArrayDataRecord : IDataRecord
+	{
+		VariableDataType ElemType { get; }
+	}
+
+	public interface IArrayDataRecordWithValue : IArrayDataRecord
+	{
+		Array? ValueArray { get; }
+	}
+	public interface IArrayDataRecordWithValue<T> : IArrayDataRecordWithValue
+	{
+		new T[]? ValueArray { get; }
+	}
+
+	public interface IArrayDataRecordWithValue_HasWithNewValue : IArrayDataRecord
+	{
+		IArrayDataRecordWithValue_HasWithNewValue WithNewValue(Array? NewValue);
+	}
+	public interface IArrayDataRecordWithValue_HasWithNewValue<T> : IArrayDataRecordWithValue_HasWithNewValue
+	{
+		IArrayDataRecordWithValue_HasWithNewValue<T> WithNewValue(T[]? NewValue);
+	}
+
+	public interface IArrayDataRecordWithValue_CanSet : IArrayDataRecord
+	{
+		Array? ValueArray { set; }
+	}
+	public interface IArrayDataRecordWithValue_CanSet<T> : IArrayDataRecordWithValue_CanSet
+	{
+		new T[]? ValueArray { set; }
+	}
+
+	public record ArrayDataRecord(VariableDataType ElemType, string Name, Array? ValueArray = null) : IArrayDataRecordWithValue, IArrayDataRecordWithValue_HasWithNewValue
 	{
 		VariableDataType IDataRecord.Type => VariableDataType.Array;
 
@@ -56,5 +88,11 @@ public partial record VariableStructure
 
 			return arr;
 		}
+
+		public IArrayDataRecordWithValue_HasWithNewValue WithNewValue(Array? NewValue)
+			=> this with
+			{
+				ValueArray = NewValue
+			};
 	}
 }

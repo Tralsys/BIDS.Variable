@@ -40,7 +40,7 @@ public class MemberInfoToVariableDataRecordListTests
 			Is.EquivalentTo(new List<VariableStructure.IDataRecord>()
 			{
 				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleClass.SampleIntProperty)),
-				new VariableStructure.ArrayStructure(VariableDataType.Int64, nameof(SampleClass.SampleLongArrayField)),
+				new VariableStructure.ArrayDataRecord(VariableDataType.Int64, nameof(SampleClass.SampleLongArrayField)),
 
 				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleBaseClass.SampleBaseIntProperty)),
 				new VariableStructure.DataRecord(VariableDataType.Int64, nameof(SampleBaseClass.SampleBaseLongField)),
