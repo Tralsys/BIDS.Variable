@@ -64,11 +64,11 @@ class Program : IDisposable
 		);
 	}
 
-	private static void SMemReader_ValueChanged(object? sender, VariableSMemValueChangedEventArgs e)
+	private static void SMemReader_ValueChanged(object? sender, VariableSMemWatcher.ChangedValues e)
 	{
 		Log(AppendSMemStructure(
-				new($"Data Update Detected! SMemName: `{e.Name}`\n"),
-				e.Payload.Values
+				new($"Data Update Detected! SMemName: `{e.SMemName}`\n"),
+				e.RawPayload.Values.Where(v => e.ChangedValuesDic.ContainsKey(v.Name))
 			).ToString()
 		);
 	}
