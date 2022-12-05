@@ -23,24 +23,10 @@ public class VariableSMemNameAddedEventArgs : EventArgs
 	}
 }
 
-public class VariableSMemValueChangedEventArgs : EventArgs
-{
-	public string Name { get; }
-	public VariableStructure Structure { get; }
-	public VariableStructurePayload Payload { get; }
-
-	public VariableSMemValueChangedEventArgs(string name, VariableStructure structure, VariableStructurePayload payload)
-	{
-		Name = name;
-		Structure = structure;
-		Payload = payload;
-	}
-}
-
 public class VariableSMemAutoReader : IDisposable
 {
 	public event EventHandler<VariableSMemNameAddedEventArgs>? NameAdded;
-	public event EventHandler<VariableSMemValueChangedEventArgs>? ValueChanged;
+	public event EventHandler<VariableSMemWatcher.ChangedValues>? ValueChanged;
 
 	NameSMemWatcher SMemNameWatcher { get; }
 
@@ -76,7 +62,7 @@ public class VariableSMemAutoReader : IDisposable
 				var v = watcher.CheckForValueChange();
 
 				if (v.ChangedValuesDic.Count > 0)
-					ValueChanged?.Invoke(this, new(watcher.SMemName, watcher.Structure, v.RawPayload));
+					ValueChanged?.Invoke(this, v);
 			}
 
 			IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
