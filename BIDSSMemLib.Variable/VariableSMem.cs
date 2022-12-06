@@ -56,6 +56,8 @@ public partial class VariableSMem : IDisposable
 	/// </summary>
 	public IReadOnlyList<VariableStructure.IDataRecord> Members => _Members;
 
+	public string Name { get; }
+
 	/// <summary>
 	/// インスタンスを初期化する
 	/// </summary>
@@ -122,6 +124,7 @@ public partial class VariableSMem : IDisposable
 		VariableStructure? structure
 	)
 	{
+		Name = smemIF.SMemName;
 		SMemIF = smemIF;
 
 		_Members = members.ToList();

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
+
+using BIDS.Parser.Variable;
 
 using TR.VariableSMemMonitor.Core;
 
@@ -11,94 +14,65 @@ namespace VariableSMemMonitor;
 class Program : IDisposable
 {
 	static readonly TimeSpan DefaultTimeSpan = new(0, 0, 0, 0, 200);
-	static void Main(string[] args)
+
+	static async Task Main(string[] args)
 	{
 		using Program program = new();
 
-		program.Run();
+		await program.Run();
 	}
 
-	NameSMemWatcher NameWatcher { get; }
-	List<VariableSMemWatcher> VSMemWatchers { get; } = new();
+	VariableSMemAutoReader SMemReader { get; }
 
 	public Program()
 	{
 		Log($"{typeof(Program).Name} Starting ...");
-		NameWatcher = new();
+
+		SMemReader = new(10);
+
+		SMemReader.NameAdded += SMemReader_NameAdded;
+		SMemReader.ValueChanged += SMemReader_ValueChanged;
+
 		Log($"{typeof(Program).Name} Initialize Complete");
 	}
 
-	public void Run()
+	public async Task Run()
 	{
-		bool isRunning = true;
+		_ = SMemReader.Run();
 
-		while (isRunning)
+		while (true)
 		{
-			NameUpdateCheckAndCreateNewVSMem();
-
-			DataUpdateCheck();
-
-			Thread.Sleep(DefaultTimeSpan);
+			await Task.Delay(DefaultTimeSpan);
 
 			if (Console.KeyAvailable && (Console.ReadLine() is "exit" or "quit"))
 			{
 				Log("`exit` or `quit` detected.  Program will terminate soon.");
-				isRunning = false;
+				SMemReader.Dispose();
+				return;
 			}
 		}
 	}
 
-	public void NameUpdateCheckAndCreateNewVSMem()
+	private static void SMemReader_NameAdded(object? sender, VariableSMemNameAddedEventArgs e)
 	{
-		IReadOnlyList<string> newNames = NameWatcher.CheckNewName();
-
-		foreach (var name in newNames)
-		{
-			Log($"NewName `{name}` detected");
-
-			try
-			{
-				VSMemWatchers.Add(new(name));
-				Log($"SMemName:`{name}` initialization Complete");
-			}
-			catch (Exception ex)
-			{
-				Log($"SMemName:`{name}` initialization failed ({ex.Message})");
-				Console.WriteLine(ex);
-			}
-		}
+		Log(AppendSMemStructure(
+				new($"NewName `{e.Name}` detected\n"),
+				e.Structure.Records
+			).ToString()
+		);
 	}
 
-	public void DataUpdateCheck()
-		=> VSMemWatchers.ForEach(DataUpdateCheck);
-
-	public static void DataUpdateCheck(VariableSMemWatcher watcher)
+	private static void SMemReader_ValueChanged(object? sender, VariableSMemWatcher.ChangedValues e)
 	{
-		var updatedValues = watcher.CheckForValueChange();
-
-		if (updatedValues.ChangedValuesDic.Count <= 0)
-			return;
-
-		StringBuilder builder = new($"Data Update Detected! SMemName:`{updatedValues.SMemName}`");
-
-		foreach (var v in updatedValues.ChangedValuesDic)
-		{
-			builder.AppendFormat("\t`{0}`=", v.Key);
-			if (v.Value is Array array)
-			{
-				builder.Append('{');
-				foreach (var elem in array)
-					builder.Append(' ').Append(elem).Append(',');
-				builder.Append('}');
-			}
-			else
-			{
-				builder.Append('`').Append(v.Value).Append('`');
-			}
-		}
-
-		Log(builder.ToString());
+		Log(AppendSMemStructure(
+				new($"Data Update Detected! SMemName: `{e.SMemName}`\n"),
+				e.RawPayload.Values.Where(v => e.ChangedValuesDic.ContainsKey(v.Name))
+			).ToString()
+		);
 	}
+
+	static StringBuilder AppendSMemStructure(StringBuilder builder, IEnumerable<VariableStructure.IDataRecord> list)
+		=> builder.AppendJoin('\n', list.Select((v, i) => $"\t[{i:D2}]: {v}"));
 
 	static void Log(
 		string text,
@@ -113,9 +87,8 @@ class Program : IDisposable
 		if (isDisposed)
 			return;
 
-		((IDisposable)NameWatcher).Dispose();
-		VSMemWatchers.ForEach(v => v.Dispose());
-		VSMemWatchers.Clear();
+		SMemReader.Dispose();
+
 		isDisposed = true;
 	}
 }

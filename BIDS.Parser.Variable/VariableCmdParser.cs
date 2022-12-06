@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace BIDS.Parser.Variable;
 
@@ -16,11 +15,10 @@ public record ValiableCmdError();
 
 public class VariableCmdParser
 {
-	public IReadOnlyDictionary<int, VariableStructure> DataTypeDict { get; }
+	public Dictionary<int, VariableStructure> DataTypeDict { get; } = new();
 
-	public VariableCmdParser(IReadOnlyDictionary<int, VariableStructure> dataTypeDict)
+	public VariableCmdParser()
 	{
-		DataTypeDict = dataTypeDict;
 	}
 
 	public IVariableCmdResult From(ReadOnlySpan<byte> gotData)
@@ -30,15 +28,19 @@ public class VariableCmdParser
 
 		int dataId = Utils.GetInt32AndMove(ref gotData);
 
-		return dataId switch
+		VariableStructure? structure;
+		switch (dataId)
 		{
-			// DataType Register
-			0 => ParseDataTypeRegisterCommand(gotData),
+			case 0:
+				structure = ParseDataTypeRegisterCommand(gotData);
+				DataTypeDict.Add(structure.DataTypeId, structure);
+				return structure;
 
-			_ => DataTypeDict.TryGetValue(dataId, out VariableStructure? structure)
-				? structure.With(gotData)
-				: new VariableCmdKeyNotFound(dataId)
-		};
+			default:
+				return DataTypeDict.TryGetValue(dataId, out structure)
+					? structure.With(gotData)
+					: new VariableCmdKeyNotFound(dataId);
+		}
 	}
 
 	public static VariableStructure ParseDataTypeRegisterCommand(ReadOnlySpan<byte> bytes)

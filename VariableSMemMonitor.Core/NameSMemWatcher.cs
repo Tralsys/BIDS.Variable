@@ -21,6 +21,12 @@ public class NameSMemWatcher : IDisposable
 		this.NameManager = NameManager;
 	}
 
+	public void AddNewName(string name)
+	{
+		KnownNames.Add(name);
+		NameManager.AddName(name);
+	}
+
 	public IReadOnlyList<string> CheckNewName()
 	{
 		List<string> addedName = new();
