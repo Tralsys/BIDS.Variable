@@ -74,27 +74,39 @@ public class VariableSMemAutoReader : IDisposable
 		}
 	}
 
-	public VariableSMemWatcher.ChangedValues? ApplyNewValue(string name, VariableStructure structure, VariableStructurePayload payload)
+	public VariableSMemWatcher.ChangedValues? ApplyNewValue(VariableStructure structure, VariableStructurePayload payload)
+		=> VariableSMemWatcherDic.TryGetValue(structure.Name, out VariableSMemWatcher? watcher)
+			? watcher.CheckForValueChange(payload)
+			: AddNewStructure(structure, payload);
+
+	public VariableSMemWatcher.ChangedValues? AddNewStructure(VariableStructure structure)
 	{
-		if (!VariableSMemWatcherDic.TryGetValue(name, out VariableSMemWatcher? watcher))
-		{
-			watcher = new(structure);
+		VariableStructurePayload payload = new(structure.DataTypeId);
 
-			// 新規追加は「全ての値が更新された」扱い
-			return new(
-				watcher.SMemName,
-				structure,
-				payload,
-				// `CurrentValue`はWatcher内部で更新されるため、コピーを作成して返す
+		foreach (var v in structure.Records)
+			payload.Add(v.Name, v);
+
+		return AddNewStructure(structure, payload);
+	}
+
+	public VariableSMemWatcher.ChangedValues? AddNewStructure(VariableStructure structure, VariableStructurePayload payload)
+	{
+		VariableSMemWatcher watcher = new(structure);
+		SMemNameWatcher.AddNewName(structure.Name);
+		VariableSMemWatcherDic.Add(structure.Name, watcher);
+
+		// 新規追加は「全ての値が更新された」扱い
+		return new(
+			watcher.SMemName,
+			structure,
+			new VariableStructurePayload(structure.DataTypeId),
+			// `CurrentValue`はWatcher内部で更新されるため、コピーを作成して返す
 #if NET6_0_OR_GREATER
-				new Dictionary<string, object?>(watcher.CurrentValues)
+			new Dictionary<string, object?>(watcher.CurrentValues)
 #else
-				watcher.CurrentValues.ToDictionary(v => v.Key, v => v.Value)
+			watcher.CurrentValues.ToDictionary(v => v.Key, v => v.Value)
 #endif
-			);
-		}
-
-		return watcher.CheckForValueChange(payload);
+		);
 	}
 
 	#region IDisposable
