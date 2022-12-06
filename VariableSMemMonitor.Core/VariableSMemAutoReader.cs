@@ -75,9 +75,20 @@ public class VariableSMemAutoReader : IDisposable
 	}
 
 	public VariableSMemWatcher.ChangedValues? ApplyNewValue(VariableStructure structure, VariableStructurePayload payload)
-		=> VariableSMemWatcherDic.TryGetValue(structure.Name, out VariableSMemWatcher? watcher)
-			? watcher.CheckForValueChange(payload)
-			: AddNewStructure(structure, payload);
+	{
+		if (VariableSMemWatcherDic.TryGetValue(structure.Name, out VariableSMemWatcher? watcher))
+		{
+			VariableSMemWatcher.ChangedValues? changedValues = watcher.CheckForValueChange(payload);
+			if (changedValues.ChangedValuesDic?.Count > 0)
+				watcher.VSMem.WriteToSMemFromPayload(payload);
+
+			return changedValues;
+		}
+		else
+		{
+			return AddNewStructure(structure, payload);
+		}
+	}
 
 	public VariableSMemWatcher.ChangedValues? AddNewStructure(VariableStructure structure)
 	{
