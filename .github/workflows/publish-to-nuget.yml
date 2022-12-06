@@ -16,6 +16,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 10
     outputs:
       ASSEMBLY_NAME: ${{ steps.get-project-info.outputs.ASSEMBLY_NAME }}
       VERSION: ${{ steps.get-project-info.outputs.VERSION }}
@@ -50,6 +51,7 @@ jobs:
 
   publish-to-nuget:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     needs:
       - build
 
