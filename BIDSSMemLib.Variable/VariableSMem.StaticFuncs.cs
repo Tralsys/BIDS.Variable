@@ -30,7 +30,7 @@ public partial class VariableSMem
 	public static VariableSMem CreateWithoutType(ISMemIF SMemIF)
 	{
 		if (SMemIF.IsNewlyCreated)
-			throw new NotInitializedException(nameof(SMemIF.SMemName));
+			throw new NotInitializedException(SMemIF.SMemName);
 
 		if (!SMemIF.Read(0, out long contentAreaOffset))
 			throw new AccessViolationException("Read from SMem failed");
