@@ -7,7 +7,7 @@ public class TypeToVariableDataRecordTests
 	{
 		Assert.That(
 			Utils.ToVariableDataRecord(type, name),
-			Is.EqualTo(new VariableStructure.DataRecord(expectedDataType, name))
+			Is.EqualTo(new VariableStructure.DataRecord(expectedDataType, name, Utils.GetDefaultValue(expectedDataType)))
 		);
 	}
 
@@ -15,10 +15,23 @@ public class TypeToVariableDataRecordTests
 	[TestCase(typeof(string), "ABC", VariableDataType.UInt8)]
 	public void NormalTest_WithTypeAndName_ReturnArrayStructure(Type type, string name, VariableDataType expectedDataType)
 	{
+		var expected = new VariableStructure.ArrayDataRecord(expectedDataType, name, Utils.GetSpecifiedTypeArray(expectedDataType, 0));
+
+		if (Utils.ToVariableDataRecord(type, name) is not VariableStructure.IArrayDataRecordWithValue actual)
+		{
+			Assert.Fail("actual was not `IArrayDataRecordWithValue");
+			return;
+		}
+
 		Assert.That(
-			Utils.ToVariableDataRecord(type, name),
-			Is.EqualTo(new VariableStructure.ArrayDataRecord(expectedDataType, name))
+			actual,
+			Is.EqualTo(expected with
+			{
+				ValueArray = actual.ValueArray
+			})
 		);
+
+		Assert.That(actual.ValueArray, Is.EquivalentTo(expected.ValueArray));
 	}
 
 	[TestCase(typeof(object[][]), "ABC", typeof(NotSupportedException))]
@@ -48,7 +61,7 @@ public class TypeToVariableDataRecordTests
 	{
 		Assert.That(
 			typeof(SampleClass).GetMember(memberName)[0].ToVariableDataRecord(),
-			Is.EqualTo(new VariableStructure.DataRecord(expectedDataType, memberName))
+			Is.EqualTo(new VariableStructure.DataRecord(expectedDataType, memberName, Utils.GetDefaultValue(expectedDataType)))
 		);
 	}
 
