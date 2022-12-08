@@ -16,15 +16,35 @@ public partial class VariableSMemTests
 
 		VariableSMem<SampleClass> variableSMem = new(SMemIF);
 
+		if (variableSMem.Members[4] is not VariableStructure.ArrayDataRecord actualString)
+		{
+			Assert.Fail("Type Missmatch (variableSMem.Members[4] was not string)");
+			return;
+		}
+		if (variableSMem.Members[5] is not VariableStructure.ArrayDataRecord actualInt32Arr)
+		{
+			Assert.Fail("Type Missmatch (variableSMem.Members[5] was not int[])");
+			return;
+		}
+
 		Assert.That(variableSMem.Members, Is.EquivalentTo(new VariableStructure.IDataRecord[]
 		{
 			SampleClass.Expected_vUInt16,
 			SampleClass.Expected_vInt32,
 			SampleClass.Expected_vInt64,
 			SampleClass.Expected_vFloat64,
-			SampleClass.Expected_vString,
-			SampleClass.Expected_vInt32Arr,
+			SampleClass.Expected_vString with
+			{
+				ValueArray = actualString.ValueArray
+			},
+			SampleClass.Expected_vInt32Arr with
+			{
+				ValueArray = actualInt32Arr.ValueArray
+			},
 		}));
+
+		Assert.That(actualString.ValueArray, Is.EquivalentTo(SampleClass.Expected_vString.ValueArray));
+		Assert.That(actualInt32Arr.ValueArray, Is.EquivalentTo(SampleClass.Expected_vInt32Arr.ValueArray));
 
 		// `GetStructureBytes`メソッドは正常に動作していることを期待する
 		byte[] expectedMemory =
@@ -336,6 +356,30 @@ public partial class VariableSMemTests
 
 		VariableSMem variableSMem1 = VariableSMem.CreateWithoutType(new SMemIFMock(SMemIF));
 
-		Assert.That(variableSMem1.Members, Is.EquivalentTo(variableSMem.Members));
+		var members0 = variableSMem.Members;
+		var members1 = variableSMem1.Members;
+
+		if (members0.Count != members1.Count)
+		{
+			Assert.Fail("Members Count Missmatch");
+			return;
+		}
+
+		for (int i = 0; i < members0.Count; i++)
+		{
+			if (members0[i] is VariableStructure.ArrayDataRecord v0 && members1[i] is VariableStructure.ArrayDataRecord v1)
+			{
+				Assert.That(v1, Is.EqualTo(v0 with
+				{
+					ValueArray = v1.ValueArray
+				}));
+
+				Assert.That(v1.ValueArray, Is.EquivalentTo(v0.ValueArray));
+			}
+			else
+			{
+				Assert.That(members1[i], Is.EqualTo(members0[i]));
+			}
+		}
 	}
 }

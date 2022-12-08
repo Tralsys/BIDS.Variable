@@ -129,12 +129,13 @@ public class ParseDataTypeRegisterCommandTests
 			arr[i++] = v;
 
 		var actual = VariableCmdParser.ParseDataTypeRegisterCommand(arr.AsSpan());
-
-		Assert.That(actual.Name, Is.EqualTo(string.Empty));
-		Assert.That(actual.Records, Has.Count.EqualTo(1));
-
+		Assert.Multiple(() =>
+		{
+			Assert.That(actual.Name, Is.EqualTo(string.Empty));
+			Assert.That(actual.Records, Has.Count.EqualTo(1));
+		});
 		Assert.That(actual.Records[0], Is.EqualTo(
-			new VariableStructure.DataRecord(expectedDataType, expectedName, null))
+			new VariableStructure.DataRecord(expectedDataType, expectedName, Utils.GetDefaultValue(expectedDataType)))
 		);
 	}
 
@@ -171,11 +172,22 @@ public class ParseDataTypeRegisterCommandTests
 
 		var actual = VariableCmdParser.ParseDataTypeRegisterCommand(arr.AsSpan());
 
-		Assert.That(actual.Records.Count, Is.EqualTo(1));
+		Assert.That(actual.Records, Has.Count.EqualTo(1));
 
-		Assert.That(actual.Records[0], Is.EqualTo(
-			new VariableStructure.ArrayDataRecord(VariableDataType.Int32, "a", null))
-		);
+		if (actual.Records[0] is not VariableStructure.ArrayDataRecord actualRecord)
+		{
+			Assert.Fail("Type missmatch (it was not ArrayDataRecord)");
+			return;
+		}
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(actual.Records[0], Is.EqualTo(
+				new VariableStructure.ArrayDataRecord(VariableDataType.Int32, "a", actualRecord.ValueArray))
+			);
+
+			Assert.That(actualRecord.ValueArray, Is.EquivalentTo(Array.Empty<int>()));
+		});
 	}
 
 	[Test]
@@ -207,7 +219,7 @@ public class ParseDataTypeRegisterCommandTests
 		Assert.That(actual.Records, Has.Count.EqualTo(1));
 
 		Assert.That(actual.Records[0], Is.EqualTo(
-			new VariableStructure.DataRecord(VariableDataType.Boolean, "", null))
+			new VariableStructure.DataRecord(VariableDataType.Boolean, "", false))
 		);
 	}
 
@@ -242,10 +254,12 @@ public class ParseDataTypeRegisterCommandTests
 			.Concat(getBytes(8, "h"))
 			.Concat(getBytes(9, "i"))
 
-			.Concat(new byte[] { 17, 0, 0, 0 })
-			.Concat(getBytes(12, "array"))
-
+			// Arrayはテストが面倒なのでテストから除外する
+			//.Concat(new byte[] { 17, 0, 0, 0 })
+			//.Concat(getBytes(12, "array"))
+#if NET5_0_OR_GREATER
 			.Concat(getBytes(12, "j"))
+#endif
 			.Concat(getBytes(13, "k"))
 			.Concat(getBytes(14, "l"))
 			.ToArray();
@@ -254,23 +268,25 @@ public class ParseDataTypeRegisterCommandTests
 
 		VariableStructure.IDataRecord[] expected = new VariableStructure.IDataRecord[]
 		{
-			new VariableStructure.DataRecord(VariableDataType.Boolean, "a", null),
+			new VariableStructure.DataRecord(VariableDataType.Boolean, "a", false),
 
-			new VariableStructure.DataRecord(VariableDataType.Int8, "b", null),
-			new VariableStructure.DataRecord(VariableDataType.Int16, "c", null),
-			new VariableStructure.DataRecord(VariableDataType.Int32, "d", null),
-			new VariableStructure.DataRecord(VariableDataType.Int64, "e", null),
+			new VariableStructure.DataRecord(VariableDataType.Int8, "b", (sbyte)0),
+			new VariableStructure.DataRecord(VariableDataType.Int16, "c", (short)0),
+			new VariableStructure.DataRecord(VariableDataType.Int32, "d", (int)0),
+			new VariableStructure.DataRecord(VariableDataType.Int64, "e", (long)0),
 
-			new VariableStructure.DataRecord(VariableDataType.UInt8, "f", null),
-			new VariableStructure.DataRecord(VariableDataType.UInt16, "g", null),
-			new VariableStructure.DataRecord(VariableDataType.UInt32, "h", null),
-			new VariableStructure.DataRecord(VariableDataType.UInt64, "i", null),
+			new VariableStructure.DataRecord(VariableDataType.UInt8, "f", (byte)0),
+			new VariableStructure.DataRecord(VariableDataType.UInt16, "g", (ushort)0),
+			new VariableStructure.DataRecord(VariableDataType.UInt32, "h", (uint)0),
+			new VariableStructure.DataRecord(VariableDataType.UInt64, "i", (ulong)0),
 
-			new VariableStructure.ArrayDataRecord(VariableDataType.Float16, "array", null),
+			//new VariableStructure.ArrayDataRecord(VariableDataType.Float16, "array", Array.Empty<Half>()),
 
-			new VariableStructure.DataRecord(VariableDataType.Float16, "j", null),
-			new VariableStructure.DataRecord(VariableDataType.Float32, "k", null),
-			new VariableStructure.DataRecord(VariableDataType.Float64, "l", null),
+#if NET5_0_OR_GREATER
+			new VariableStructure.DataRecord(VariableDataType.Float16, "j", default(Half)),
+#endif
+			new VariableStructure.DataRecord(VariableDataType.Float32, "k", (float)0),
+			new VariableStructure.DataRecord(VariableDataType.Float64, "l", (double)0),
 		};
 
 		Assert.That(actual.Records, Is.EquivalentTo(expected));

@@ -15,7 +15,7 @@ public class NameSMemWatcherTests
 	{
 		SMemIFMock memory = new("test", 0x1000);
 
-		NameSMemWatcher watcher = new();
+		NameSMemWatcher watcher = new(memory);
 
 		IReadOnlyList<string> newNames = watcher.CheckNewName();
 

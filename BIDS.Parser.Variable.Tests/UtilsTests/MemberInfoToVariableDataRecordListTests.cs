@@ -35,16 +35,36 @@ public class MemberInfoToVariableDataRecordListTests
 	[Test]
 	public void NormalTest()
 	{
-		Assert.That(
-			typeof(SampleClass).ToVariableDataRecordList(),
-			Is.EquivalentTo(new List<VariableStructure.IDataRecord>()
-			{
-				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleClass.SampleIntProperty)),
-				new VariableStructure.ArrayDataRecord(VariableDataType.Int64, nameof(SampleClass.SampleLongArrayField)),
+		var actual = typeof(SampleClass).ToVariableDataRecordList();
 
-				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleBaseClass.SampleBaseIntProperty)),
-				new VariableStructure.DataRecord(VariableDataType.Int64, nameof(SampleBaseClass.SampleBaseLongField)),
-			})
-		);
+		Assert.Multiple(() =>
+		{
+			Assert.That(
+				actual,
+				Is.EquivalentTo(new List<VariableStructure.IDataRecord>()
+				{
+				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleClass.SampleIntProperty), (int)0),
+				new VariableStructure.DataRecord(VariableDataType.Int32, nameof(SampleBaseClass.SampleBaseIntProperty), (int)0),
+
+				actual[2],
+				new VariableStructure.DataRecord(VariableDataType.Int64, nameof(SampleBaseClass.SampleBaseLongField), (long)0),
+				})
+			);
+
+			var expect_2 = new VariableStructure.ArrayDataRecord(VariableDataType.Int64, nameof(SampleClass.SampleLongArrayField), Array.Empty<int>());
+
+			if (actual[2] is not VariableStructure.IArrayDataRecordWithValue actual_2)
+			{
+				Assert.Fail("Invalid Type (actual[1])");
+				return;
+			}
+
+			Assert.That(actual_2, Is.EqualTo(expect_2 with
+			{
+				ValueArray = actual_2.ValueArray
+			}));
+
+			Assert.That(actual_2.ValueArray, Is.EquivalentTo(expect_2.ValueArray));
+		});
 	}
 }

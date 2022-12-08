@@ -25,14 +25,15 @@ public static partial class Utils
 			if (elemDataType == VariableDataType.Array)
 				throw new NotSupportedException("Currently, nested array is not supported.");
 
-			return new VariableStructure.ArrayDataRecord(elemDataType, name);
+			return new VariableStructure.ArrayDataRecord(elemDataType, name, GetSpecifiedTypeArray(elemDataType, 0));
 		}
 
 		if (memberType == typeof(string))
 		{
-			return new VariableStructure.ArrayDataRecord(VariableDataType.UInt8, name);
+			return new VariableStructure.ArrayDataRecord(VariableDataType.UInt8, name, Array.Empty<byte>());
 		}
 
-		return new VariableStructure.DataRecord(memberType.ToVariableDataType(), name);
+		VariableDataType variableDataType = memberType.ToVariableDataType();
+		return new VariableStructure.DataRecord(variableDataType, name, GetDefaultValue(variableDataType));
 	}
 }

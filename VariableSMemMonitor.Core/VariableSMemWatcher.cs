@@ -39,12 +39,13 @@ public class VariableSMemWatcher : IDisposable
 		foreach (var v in VSMem.Structure.Records)
 		{
 			// Structure指定で初期化されて、かつValue / ValueArrayに値が保存されていた場合に限り初期値が設定される
+			// それ以外の場合は、それぞれの型のデフォルト値が設定される (配列であれば空の配列)
 			_CurrentValues.Add(v.Name, v switch
 			{
 				VariableStructure.IDataRecordWithValue dataRecord => dataRecord.Value,
 				VariableStructure.IArrayDataRecordWithValue dataRecord => dataRecord.ValueArray,
 
-				_ => null,
+				_ => Utils.GetDefaultValue(v),
 			});
 		}
 	}

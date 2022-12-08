@@ -35,10 +35,10 @@ public class VariableSMemWatcherTests
 		Assert.Multiple(() =>
 		{
 			Assert.That(changedValues.SMemName, Is.EqualTo(memory.SMemName));
-			Assert.That(changedValues.ChangedValuesDic, Has.Count.EqualTo(2));
 
-			Assert.That(changedValues.ChangedValuesDic[nameof(BasicSampleClass.IntValue)], Is.EqualTo((int)0));
-			Assert.That(changedValues.ChangedValuesDic[nameof(BasicSampleClass.UInt16Value)], Is.EqualTo((ushort)0));
+			// 初期化時点から変化がないため、`ChangedValue`も存在しない。
+			// なお、初期値は`ChangedValue`に含まれない。
+			Assert.That(changedValues.ChangedValuesDic, Has.Count.Zero);
 		});
 	}
 
@@ -55,15 +55,7 @@ public class VariableSMemWatcherTests
 		Assert.Multiple(() =>
 		{
 			Assert.That(changedValues.SMemName, Is.EqualTo(memory.SMemName));
-			Assert.That(changedValues.ChangedValuesDic, Has.Count.EqualTo(4));
-
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.IntValue)], Is.EqualTo((int)0));
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.UInt16Value)], Is.EqualTo((ushort)0));
-
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.SampleString)], Has.Length.Zero);
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.SampleString)], Is.EqualTo(string.Empty));
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.SampleDoubleArr)], Has.Length.Zero);
-			Assert.That(changedValues.ChangedValuesDic[nameof(ArraySampleClass.SampleDoubleArr)].GetType(), Is.EqualTo(typeof(double[])));
+			Assert.That(changedValues.ChangedValuesDic, Has.Count.Zero);
 		});
 	}
 
@@ -76,7 +68,7 @@ public class VariableSMemWatcherTests
 
 		VariableSMemWatcher monitor = new(new SMemIFMock(memory));
 
-		Assert.That(monitor.CheckForValueChange().ChangedValuesDic, Has.Count.EqualTo(2));
+		Assert.That(monitor.CheckForValueChange().ChangedValuesDic, Has.Count.Zero);
 
 		BasicSampleClass data = new()
 		{
@@ -119,7 +111,7 @@ public class VariableSMemWatcherTests
 
 		VariableSMemWatcher monitor = new(new SMemIFMock(memory));
 
-		Assert.That(monitor.CheckForValueChange().ChangedValuesDic, Has.Count.EqualTo(4));
+		Assert.That(monitor.CheckForValueChange().ChangedValuesDic, Has.Count.Zero);
 
 		ArraySampleClass data = new()
 		{
