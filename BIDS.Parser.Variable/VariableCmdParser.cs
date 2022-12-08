@@ -73,9 +73,9 @@ public class VariableCmdParser
 			string dataName = Utils.GetStringAndMove(ref bytes);
 
 			if (arrayElemDataType is VariableDataType elemDataType)
-				records.Add(new VariableStructure.ArrayDataRecord(elemDataType, dataName));
+				records.Add(new VariableStructure.ArrayDataRecord(elemDataType, dataName, Utils.GetSpecifiedTypeArray(elemDataType, 0)));
 			else
-				records.Add(new VariableStructure.DataRecord(dataType, dataName));
+				records.Add(new VariableStructure.DataRecord(dataType, dataName, Utils.GetDefaultValue(dataType)));
 		}
 
 		return new VariableStructure(cmdDataType, structureName, records);
