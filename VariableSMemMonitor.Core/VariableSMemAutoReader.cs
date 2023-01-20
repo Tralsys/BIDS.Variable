@@ -32,13 +32,31 @@ public class VariableSMemAutoReader : IDisposable
 
 	Task? AutoReadTask = null;
 
-	public VariableSMemAutoReader(int Interval_ms)
+	Func<string, VariableSMemWatcher> VariableSMemWatcherGenerator { get; } = GenerateVariableSMemWatcher;
+	static VariableSMemWatcher GenerateVariableSMemWatcher(string name)
+		=> new(name);
+
+
+	public VariableSMemAutoReader(int Interval_ms) : this(Interval_ms, new())
+	{
+	}
+
+	public VariableSMemAutoReader(int Interval_ms, NameSMemWatcher SMemNameWatcher)
 	{
 		VariableSMemWatcherDic = new();
 
-		SMemNameWatcher = new();
+		this.SMemNameWatcher = SMemNameWatcher;
 
 		this.Interval_ms = Interval_ms;
+	}
+
+	public VariableSMemAutoReader(
+		int Interval_ms,
+		NameSMemWatcher SMemNameWatcher,
+		Func<string, VariableSMemWatcher> VariableSMemWatcherGenerator
+	) : this(Interval_ms, SMemNameWatcher)
+	{
+		this.VariableSMemWatcherGenerator = VariableSMemWatcherGenerator;
 	}
 
 	public Task Run()
@@ -56,7 +74,7 @@ public class VariableSMemAutoReader : IDisposable
 
 			foreach (var newName in newNames)
 			{
-				VariableSMemWatcher vsmemWatcher = new(newName);
+				VariableSMemWatcher vsmemWatcher = GenerateVariableSMemWatcher(newName);
 				VariableSMemWatcherDic.Add(newName, vsmemWatcher);
 
 				NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
