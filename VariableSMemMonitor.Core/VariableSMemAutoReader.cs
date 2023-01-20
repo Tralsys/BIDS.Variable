@@ -70,25 +70,30 @@ public class VariableSMemAutoReader : IDisposable
 	{
 		while (!disposingValue)
 		{
-			IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
-
-			foreach (var newName in newNames)
-			{
-				VariableSMemWatcher vsmemWatcher = GenerateVariableSMemWatcher(newName);
-				VariableSMemWatcherDic.Add(newName, vsmemWatcher);
-
-				NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
-			}
-
-			foreach (var watcher in VariableSMemWatcherDic.Values)
-			{
-				var v = watcher.CheckForValueChange();
-
-				if (v.ChangedValuesDic.Count > 0)
-					ValueChanged?.Invoke(this, v);
-			}
+			ReadOnce();
 
 			await Task.Delay(Interval_ms);
+		}
+	}
+
+	public void ReadOnce()
+	{
+		IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
+
+		foreach (var newName in newNames)
+		{
+			VariableSMemWatcher vsmemWatcher = GenerateVariableSMemWatcher(newName);
+			VariableSMemWatcherDic.Add(newName, vsmemWatcher);
+
+			NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
+		}
+
+		foreach (var watcher in VariableSMemWatcherDic.Values)
+		{
+			var v = watcher.CheckForValueChange();
+
+			if (v.ChangedValuesDic.Count > 0)
+				ValueChanged?.Invoke(this, v);
 		}
 	}
 
