@@ -47,7 +47,11 @@ public partial class VariableSMem
 		if (!SMemIF.ReadArray(StructureAreaOffset, structureBytes, 0, structureBytes.Length))
 			throw new AccessViolationException("Read from SMem failed");
 
-		VariableStructure structure = VariableCmdParser.ParseDataTypeRegisterCommand(structureBytes);
+		VariableStructure structure = VariableCmdParser.ParseDataTypeRegisterCommand(structureBytes)
+			with
+		{
+			Name = SMemIF.SMemName
+		};
 
 		return new VariableSMem(SMemIF, structure);
 	}
