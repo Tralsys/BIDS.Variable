@@ -130,8 +130,9 @@ public partial class VariableSMem : IDisposable
 		_Members = members.ToList();
 		if (structure is null)
 		{
-			// Structure Nameは、共有メモリにおいてはSMemNameで代替できるため、記録しない
-			Structure = new(-1, string.Empty, _Members);
+			// Structure Nameは、共有メモリにおいてはSMemNameで代替できるものの、Parseプロセスの都合上、これも記録するようにする。
+			// なお、将来的には記録しないようにしたい。
+			Structure = new(-1, Name, _Members);
 		}
 		else
 		{
@@ -150,7 +151,13 @@ public partial class VariableSMem : IDisposable
 	/// <returns>ContentAreaOffset</returns>
 	long InitSMem()
 	{
-		byte[] structureBytes = Structure.GetStructureBytes().ToArray();
+		// DataTypeIdとStructure Nameは不要なので、意味のない値にする
+		// 本当は削除してしまいたいけど、Parseプロセスの都合で残す。
+		byte[] structureBytes = (Structure with
+		{
+			DataTypeId = -1,
+			Name = string.Empty,
+		}).GetStructureBytes().ToArray();
 
 		long contentAreaOffset
 			= StructureAreaOffset

@@ -32,13 +32,31 @@ public class VariableSMemAutoReader : IDisposable
 
 	Task? AutoReadTask = null;
 
-	public VariableSMemAutoReader(int Interval_ms)
+	Func<string, VariableSMemWatcher> VariableSMemWatcherGenerator { get; } = GenerateVariableSMemWatcher;
+	static VariableSMemWatcher GenerateVariableSMemWatcher(string name)
+		=> new(name);
+
+
+	public VariableSMemAutoReader(int Interval_ms) : this(Interval_ms, new())
+	{
+	}
+
+	public VariableSMemAutoReader(int Interval_ms, NameSMemWatcher SMemNameWatcher)
 	{
 		VariableSMemWatcherDic = new();
 
-		SMemNameWatcher = new();
+		this.SMemNameWatcher = SMemNameWatcher;
 
 		this.Interval_ms = Interval_ms;
+	}
+
+	public VariableSMemAutoReader(
+		int Interval_ms,
+		NameSMemWatcher SMemNameWatcher,
+		Func<string, VariableSMemWatcher> VariableSMemWatcherGenerator
+	) : this(Interval_ms, SMemNameWatcher)
+	{
+		this.VariableSMemWatcherGenerator = VariableSMemWatcherGenerator;
 	}
 
 	public Task Run()
@@ -52,25 +70,30 @@ public class VariableSMemAutoReader : IDisposable
 	{
 		while (!disposingValue)
 		{
-			IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
-
-			foreach (var newName in newNames)
-			{
-				VariableSMemWatcher vsmemWatcher = new(newName);
-				VariableSMemWatcherDic.Add(newName, vsmemWatcher);
-
-				NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
-			}
-
-			foreach (var watcher in VariableSMemWatcherDic.Values)
-			{
-				var v = watcher.CheckForValueChange();
-
-				if (v.ChangedValuesDic.Count > 0)
-					ValueChanged?.Invoke(this, v);
-			}
+			ReadOnce();
 
 			await Task.Delay(Interval_ms);
+		}
+	}
+
+	public void ReadOnce()
+	{
+		IReadOnlyList<string> newNames = SMemNameWatcher.CheckNewName();
+
+		foreach (var newName in newNames)
+		{
+			VariableSMemWatcher vsmemWatcher = GenerateVariableSMemWatcher(newName);
+			VariableSMemWatcherDic.Add(newName, vsmemWatcher);
+
+			NameAdded?.Invoke(this, new(newName, vsmemWatcher.Structure));
+		}
+
+		foreach (var watcher in VariableSMemWatcherDic.Values)
+		{
+			var v = watcher.CheckForValueChange();
+
+			if (v.ChangedValuesDic.Count > 0)
+				ValueChanged?.Invoke(this, v);
 		}
 	}
 
